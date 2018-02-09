@@ -1,0 +1,12 @@
+<resources>
+     <string name="app_name">Sarapp</string>
+     <string name="sarapp">Sarapp</string>
+     <string name="hello">HELLO</string>
+     <string name="title_activity_view_food_store">ViewFoodStore</string>
+     <string name="location">Location:</string>
+     <string name="rating">Rating:</string>
+     <string name="ratings">Ratings</string>
+     <string name="cuisine_type">Cuisine Type:</string>
+     <string name="comment">Comment:</string>
+     <string name="sarapp_rating">Sarapp Rating:</string>
+</resources>
