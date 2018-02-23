@@ -9,4 +9,8 @@
      <string name="cuisine_type">Cuisine Type:</string>
      <string name="comment">Comment:</string>
      <string name="sarapp_rating">Sarapp Rating:</string>
+     <string name="food_quality">Food Quality</string>
+     <string name="pricing">Pricing</string>
+     <string name="service">Service</string>
+     <string name="ambience">Ambience</string>
 </resources>

@@ -76,7 +76,7 @@ Purpose of file: Layouts the custom list row showing the food store details -->
 
           <android.support.v7.widget.CardView
                android:layout_width="wrap_content"
-               android:layout_height="match_parent"
+               android:layout_height="wrap_content"
                android:layout_below="@+id/foodStoreLocCustom"
                android:layout_marginTop="2dp"
                app:cardBackgroundColor="@color/orange"

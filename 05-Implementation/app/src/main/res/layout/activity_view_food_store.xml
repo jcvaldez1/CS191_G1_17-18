@@ -12,145 +12,194 @@ Client Group: CS 192 class
 Purpose of file: Layouts the activity that shows the food store profile -->
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     xmlns:app="http://schemas.android.com/apk/res-auto"
-     xmlns:tools="http://schemas.android.com/tools"
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     tools:context="com.example.gelic.Sarapp.ViewFoodStore">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.gelic.Sarapp.ViewFoodStore">
 
-     <RelativeLayout
-          android:id="@+id/myId"
-          android:layout_width="fill_parent"
-          android:layout_height="198dp"
-          android:padding="10dip">
+    <RelativeLayout
+        android:id="@+id/myId"
+        android:layout_width="fill_parent"
+        android:layout_height="198dp"
+        android:padding="10dip">
 
-          <android.support.v7.widget.CardView
-               android:layout_width="80dp"
-               android:layout_height="80dp"
-               android:layout_alignParentTop="true"
-               android:layout_centerInParent="true"
-               android:elevation="12dp"
-               android:innerRadius="0dp"
-               android:shape="ring"
-               android:thicknessRatio="1.9"
-               app:cardBackgroundColor="@color/orange"
-               app:cardCornerRadius="40dp">
+        <android.support.v7.widget.CardView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:elevation="12dp"
+            android:innerRadius="0dp"
+            android:shape="ring"
+            android:thicknessRatio="1.9"
+            app:cardBackgroundColor="@color/orange"
+            app:cardCornerRadius="40dp">
 
-               <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@android:color/background_light" />
-          </android.support.v7.widget.CardView>
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:color/background_light" />
+        </android.support.v7.widget.CardView>
 
-          <TextView
-               android:id="@+id/foodStoreName"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignParentTop="true"
-               android:layout_centerHorizontal="true"
-               android:layout_marginTop="80dp"
-               android:fontFamily="@font/roboto_bold"
-               android:textColor="@color/black"
-               android:textSize="25sp" />
-
-
-          <TextView
-               android:id="@+id/foodStoreCuis"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_below="@id/foodStoreName"
-               android:layout_centerHorizontal="true"
-               android:layout_centerInParent="true"
-               android:layout_marginTop="-5dp"
-               android:fontFamily="@font/roboto_medium"
-               android:textColor="@color/black"
-               android:textSize="15sp" />
+        <TextView
+            android:id="@+id/foodStoreName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:fontFamily="@font/roboto_bold"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
 
 
-          <TextView
-               android:id="@+id/foodStoreLoc"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignBottom="@+id/locStat"
-               android:layout_below="@+id/foodStoreCuis"
-               android:layout_centerInParent="true"
-               android:layout_marginTop="-5dp"
-               android:fontFamily="@font/roboto_regular"
-               android:textColor="@color/black"
-               android:textSize="15sp" />
-
-          <android.support.v7.widget.CardView
-               android:id="@+id/cardView"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_below="@+id/foodStoreLoc"
-               android:layout_centerInParent="true"
-               android:layout_marginTop="2dp"
-               app:cardBackgroundColor="@color/orange"
-               app:cardCornerRadius="10dp">
-
-               <TextView
-                    android:id="@+id/ratStat"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/satisfy_regular"
-                    android:text="@string/sarapp_rating"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+        <TextView
+            android:id="@+id/foodStoreCuis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/foodStoreName"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="-5dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
 
-               <TextView
-                    android:id="@+id/foodStoreRat"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignEnd="@+id/foodStoreLoc"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="130dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="130dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+        <TextView
+            android:id="@+id/foodStoreLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/locStat"
+            android:layout_below="@+id/foodStoreCuis"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="-5dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
-          </android.support.v7.widget.CardView>
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/foodStoreLoc"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="2dp"
+            app:cardBackgroundColor="@color/orange"
+            app:cardCornerRadius="10dp">
 
-     </RelativeLayout>
+            <TextView
+                android:id="@+id/ratStat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/satisfy_regular"
+                android:text="@string/sarapp_rating"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
-     <LinearLayout
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          app:layout_constraintTop_toBottomOf="@id/myId">
 
-          <Button
-               android:id="@+id/button_id1"
-               style="?android:attr/borderlessButtonStyle"
-               android:layout_width="fill_parent"
-               android:layout_height="48dp"
-               android:layout_weight="1"
-               android:background="@color/orange"
-               android:fontFamily="@font/roboto_medium"
-               android:text="@string/ratings"
-               android:textAllCaps="false"
-               android:textColor="@color/white"
-               app:layout_constraintRight_toLeftOf="@id/button_id2" />
+            <TextView
+                android:id="@+id/foodStoreRat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignEnd="@+id/foodStoreLoc"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="130dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="130dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
-          <Button
-               android:id="@+id/button_id2"
-               style="?android:attr/borderlessButtonStyle"
-               android:layout_width="fill_parent"
-               android:layout_weight="1"
-               android:layout_height="48dp"
-               android:background="@color/light_orange"
-               android:fontFamily="@font/roboto_medium"
-               android:text="Google Map"
-               android:textAllCaps="false"
-               android:textColor="@color/black"
-               app:layout_constraintLeft_toRightOf="@id/button_id1"
-               tools:layout_editor_absoluteX="192dp"
-               tools:layout_editor_absoluteY="198dp" />
-     </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_layout1_id"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/myId">
+
+        <Button
+            android:id="@+id/button_id1"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@color/orange"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/ratings"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintRight_toLeftOf="@id/button_id2" />
+
+        <Button
+            android:id="@+id/button_id2"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@color/light_orange"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Google Map"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            app:layout_constraintLeft_toRightOf="@id/button_id1"
+            tools:layout_editor_absoluteX="192dp"
+            tools:layout_editor_absoluteY="198dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_layout999_id"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        app:layout_constraintTop_toBottomOf="@id/linear_layout1_id">
+        `
+
+        <Button
+            android:id="@+id/button_id3"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/submitrating_button_bg"
+            android:fontFamily="@font/roboto_medium"
+            android:onClick="launchSubmitRating"
+            android:text="Submit Rating"
+            android:textAllCaps="false"
+            android:textColor="@color/dark_orange" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id = "@+id/scrollView"
+        app:layout_constraintTop_toBottomOf="@id/linear_layout999_id">
+        <ListView
+            android:id="@+id/ratingList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/scrollView">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text = "END OF RESULTS"/>
+
+    </LinearLayout>
+
+
+
 </android.support.constraint.ConstraintLayout>

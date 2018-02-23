@@ -5,9 +5,10 @@ Angelika Juliah S. Galang
 
 /* Code History:
 Initial Code Authored by: Angelika Juliah S. Galang
+Update 2/21/2018: Angelika Juliah S. Galang
 */
 
-/* File Creation Date: (Sprint 1) 2/4/2018 to 2/8/2018
+/* File Creation Date: (Sprint 2) 2/4/2018 to 2/8/2018
      Development Group: Group 1
      Client Group: CS 192 Class
      Purpose of File: Handles all operation to be done in database
@@ -37,6 +38,7 @@ Initial Code Authored by: Angelika Juliah S. Galang
 
 package com.example.gelic.Sarapp;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -44,11 +46,14 @@ import android.database.Cursor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -216,4 +221,119 @@ public class DBHandler extends SQLiteOpenHelper {
           return foodStoreList;
      }
 
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+      */
+     public ArrayList<Float> getFoodStore(int id) {
+          ArrayList<Float> foodstore = new ArrayList<>();
+          openDB();
+          Cursor cursor = db.query("FoodStore",null,"id=?", new String[]{String.valueOf(id)},null,null,null);
+          cursor.moveToFirst();
+          foodstore.add(cursor.getFloat(6));
+          foodstore.add(cursor.getFloat(7));
+          cursor.close();
+          closeDB();
+          return foodstore;
+     }
+
+      /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+      */
+
+     public long updateFoodStore(int id, float rating, float curr_sum, float ctr) {
+          ContentValues contentValues = new ContentValues();
+          contentValues.put("rating", rating);
+          contentValues.put("curr_sum", curr_sum);
+          contentValues.put("rating_ctr", ctr);
+          String[] whereArgs = {Integer.toString(id)};
+          openDB();
+          long returnValue = db.update("FoodStore",contentValues, "ID=?", whereArgs);
+          closeDB();
+          return returnValue;
+     }
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public long addRating(String d, float fq, float p, float s, float a, String c,float ave){
+          ContentValues contentValues = new ContentValues();
+          contentValues.put("date", d);
+          contentValues.put("quality",fq);
+          contentValues.put("pricing",p);
+          contentValues.put("service",s);
+          contentValues.put("ambience",a);
+          contentValues.put("comment",c);
+          contentValues.put("average",ave);
+          openDB();
+          long returnValue = db.insert("Comment", null, contentValues);
+          Log.d("returnValue",String.valueOf(returnValue));
+          closeDB();
+          return returnValue;
+     }
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public long addRatingRelation(int s_id, int u_id){
+          ContentValues contentValues = new ContentValues();
+          contentValues.put("store_id", s_id);
+          contentValues.put("user_id",u_id);
+          openDB();
+          long returnValue = db.insert("FoodStoreRating", null, contentValues);
+          closeDB();
+          return returnValue;
+     }
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public ArrayList<UserRatings> getAllRatings (int id){
+          UserRatings userRatings;
+          ArrayList<UserRatings> userRatingList = new ArrayList<>();
+          String _store_id = String.valueOf(id);
+          openDB();
+          Cursor row = db.rawQuery("SELECT * FROM Comment INNER JOIN FoodStoreRating ON FoodStoreRating.user_id = Comment.id WHERE store_id = " + _store_id +";", null);
+          row.moveToFirst();
+
+          while (!row.isAfterLast()) {
+               userRatings = new UserRatings(row.getInt(0), row.getString(1),
+                         row.getFloat(2), row.getFloat(3), row.getFloat(4),
+                         row.getFloat(5), row.getString(6),row.getFloat(7));
+               userRatingList.add(userRatings);
+               row.moveToNext();
+          }
+          row.close();
+          closeDB();
+          return userRatingList;
+     }
 }

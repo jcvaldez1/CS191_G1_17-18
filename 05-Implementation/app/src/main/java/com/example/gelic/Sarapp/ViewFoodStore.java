@@ -5,6 +5,7 @@ Angelika Juliah S. Galang
 
 /* Code History:
 Initial Code Authored by: Angelika Juliah S. Galang
+Update 2/22/18: Angelika Juliah S. Galang
 */
 
 /* File Creation Date: (Sprint 1) 2/4/2018 to 2/8/2018
@@ -27,25 +28,52 @@ Initial Code Authored by: Angelika Juliah S. Galang
 
 package com.example.gelic.Sarapp;
 
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import android.content.Intent;
 import android.view.View;
 
 public class ViewFoodStore extends AppCompatActivity {
 
+     int id;
      TextView name;
      TextView location;
      TextView cuisineType;
      TextView rating;
      ImageView img;
-     Button ratingButton, googleMapButton;
+     Button ratingButton, googleMapButton, submitRating;
+     ArrayList<String> foodStoreList;
+     byte[] byteArray;
+     Bundle extras;
+     DBHandler dbHandler;
+     ArrayList<UserRatings> ratings;
+     ArrayList<Integer> ratingId = new ArrayList<>();
+     ArrayList<String> ratingDate = new ArrayList<>();
+     ArrayList<Float> ratingQuality = new ArrayList<>();
+     ArrayList<Float> ratingPricing = new ArrayList<>();
+     ArrayList<Float> ratingService = new ArrayList<>();
+     ArrayList<Float> ratingAmbience = new ArrayList<>();
+     ArrayList<String> ratingComment = new ArrayList<>();
+     ArrayList<Float> ratingAverage = new ArrayList<>();
+     ArrayAdapter<String> ratingAdapter;
+     ListView ratingListView;
+     int user_id = 0;
+
 
      /*
      Method Name: onCreate
@@ -72,20 +100,81 @@ public class ViewFoodStore extends AppCompatActivity {
           rating = findViewById(R.id.foodStoreRat);
           img = findViewById(R.id.imageView);
 
-          Bundle extras = getIntent().getExtras();
+          dbHandler = new DBHandler(this);
+          extras = getIntent().getExtras();
           if (extras != null) {
 
-               ArrayList<String> foodStoreList = extras.getStringArrayList("foodstore");
-               byte[] byteArray = extras.getByteArray("image");
+               foodStoreList = extras.getStringArrayList("foodstore");
+               byteArray = extras.getByteArray("image");
                Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-               name.setText(foodStoreList.get(0));
-               location.setText(foodStoreList.get(1));
-               cuisineType.setText(foodStoreList.get(2));
-               rating.setText(foodStoreList.get(3));
+
+               id = Integer.parseInt(foodStoreList.get(0));
+               Log.d("id",String.valueOf(id));
+               name.setText(foodStoreList.get(1));
+               location.setText(foodStoreList.get(2));
+               cuisineType.setText(foodStoreList.get(3));
+               rating.setText(foodStoreList.get(4));
                img.setImageBitmap(bmp);
 
           }
+
+          try {
+               dbHandler.createDB();
+          } catch (IOException ioe) {
+               throw new Error("Unable to create database");
+          }
+          try {
+               dbHandler.openDB();
+          } catch (SQLiteException sqle) {
+               throw sqle;
+          }
+
+
+          ratings = dbHandler.getAllRatings(id);
+
+
+          for (UserRatings userRating : ratings) {
+               ratingId.add(userRating.get_id());
+               ratingDate.add(userRating.get_date());
+               ratingQuality.add(userRating.get_quality());
+               ratingPricing.add(userRating.get_pricing());
+               ratingService.add(userRating.get_service());
+               ratingAmbience.add(userRating.get_ambience());
+               ratingComment.add(userRating.get_comment());
+               ratingAverage.add(userRating.get_average());
+          }
+          ratingAdapter = new CustomRowAdapterRating(this, ratingDate, ratingQuality, ratingPricing,
+                    ratingService, ratingAmbience, ratingComment, ratingAverage);
+          ratingListView = findViewById(R.id.ratingList);
+          ratingListView.setAdapter(ratingAdapter);
+          if (!ratingId.isEmpty()){
+               user_id = ratingId.get(ratingId.size() - 1);
+          }
+
      }
 
+     /*
+     Method Name: launchSubmitRating
+     Creation Date: 2/21/2018
+     Purpose: Launches the submit rating activity
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value: None
+      */
+     public void launchSubmitRating(View view) {
+          Bundle dataBundle = new Bundle();
+          dataBundle.putInt("id",id);
+          dataBundle.putInt("user_id",user_id);
+          dataBundle.putStringArrayList("foodstore",foodStoreList);
+          dataBundle.putByteArray("image",byteArray);
+
+
+          Intent intent = new Intent(this, SubmitRating.class);
+          intent.putExtras(dataBundle);
+          startActivity(intent);
+     }
 
 }
+
+

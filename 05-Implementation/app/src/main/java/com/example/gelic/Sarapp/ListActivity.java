@@ -48,6 +48,7 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
      ArrayList<FoodStores> foodStores = new ArrayList<>();
+     ArrayList<Integer> foodStoreId = new ArrayList<>();
      ArrayList<String> foodStoreNames = new ArrayList<>();
      ArrayList<String> foodStoreCuisineTypes = new ArrayList<>();
      ArrayList<String> foodStoreLocations = new ArrayList<>();
@@ -73,8 +74,8 @@ public class ListActivity extends AppCompatActivity {
           super.onCreate(savedInstanceState);
           setContentView(R.layout.activity_list);
           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
           dbHandler = new DBHandler(this);
+
           try {
                dbHandler.createDB();
           } catch (IOException ioe) {
@@ -87,10 +88,11 @@ public class ListActivity extends AppCompatActivity {
           }
 
 
+
           foodStores = dbHandler.getAllFoodStores();
 
-
           for (FoodStores foodStore : foodStores) {
+               foodStoreId.add(foodStore.get_id());
                foodStoreNames.add(foodStore.get_foodStoreName());
                foodStoreCuisineTypes.add(foodStore.get_cuisineType());
                foodStoreLocations.add(foodStore.get_foodStoreLocation());
@@ -126,6 +128,7 @@ public class ListActivity extends AppCompatActivity {
                               byte[] byteArray;
                               Intent intent;
 
+                              rowAttributes.add(String.valueOf(foodStoreId.get(i)));
                               rowAttributes.add(foodStoreNames.get(i));
                               rowAttributes.add(foodStoreLocations.get(i));
                               rowAttributes.add(foodStoreCuisineTypes.get(i));
@@ -144,6 +147,8 @@ public class ListActivity extends AppCompatActivity {
                          }
                     }
           );
+
+
      }
 
 }
