@@ -1,0 +1,47 @@
+
+<!-- # “This is a course requirement for CS 192 Software Engineering II
+# under the supervision of Asst. Prof. Ma. Rowena C. Solamo of the
+# Department of Computer Science, College of Engineering,
+# University of the Philippines, Diliman for the AY 2015-2016”.
+
+# Julian Troy C. Valdez
+
+#  Code History:
+# Initial Code Authored by: Julian Troy C. Valdez
+#
+#  File Creation Date: (Sprint 2) 2/17/2018 to 2/18/2018
+#      Development Group: Group 1
+#      Client Group: CS 192 Class
+#      Purpose of File: Temporary html view for the USer list page -->
+
+<h1> Food Stores </h1>
+
+<table>
+  <tbody>
+         <tr><th><%= @foodstores.name %></th></tr>
+         <tr><th><%= @foodstores.location %></th></tr>
+         <tr><th><%= @foodstores.cuisineType %></th></tr>
+    <% @ratings.each do |rating| %>
+
+         <tr><th>Rating #<%= rating.id %><th></tr>
+         <tr>
+            <th>Food Quality</th>
+            <th>Pricing</th>
+            <th>Service</th>
+            <th>Ambience</th>
+            <th>Average</th>
+            <th>Comment</th>
+         </tr>
+         <tr>
+           <td><%= rating.foodquality %></td>
+           <td><%= rating.pricing %></td>
+           <td><%= rating.service %></td>
+           <td><%= rating.ambience %></td>
+           <td><%= rating.average %></td>
+           <td><%= rating.comment %></td>
+         </tr>
+    <% end %>
+
+  </tbody>
+
+</table>

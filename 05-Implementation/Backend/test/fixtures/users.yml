@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date_stamp: 2018-02-16
+  foodquality: 1
+  pricing: 1
+  service: 1
+  ambience: 1
+  comment: MyText
+  average: 1.5
+
+two:
+  date_stamp: 2018-02-16
+  foodquality: 1
+  pricing: 1
+  service: 1
+  ambience: 1
+  comment: MyText
+  average: 1.5

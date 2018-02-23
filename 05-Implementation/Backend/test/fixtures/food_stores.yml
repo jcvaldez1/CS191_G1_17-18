@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  location: MyString
+  cuisineType: MyString
+  curr_sum: 1.5
+  num_of_rating: 1
+  sarapp_rating: 1.5
+
+two:
+  name: MyString
+  location: MyString
+  cuisineType: MyString
+  curr_sum: 1.5
+  num_of_rating: 1
+  sarapp_rating: 1.5
