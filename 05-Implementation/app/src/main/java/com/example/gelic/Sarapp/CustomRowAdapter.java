@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 class CustomRowAdapter extends ArrayAdapter<String> {
@@ -85,6 +86,7 @@ class CustomRowAdapter extends ArrayAdapter<String> {
           TextView foodStoreLocCustom = customView.findViewById(R.id.foodStoreLocCustom);
           TextView foodStoreRatCustom = customView.findViewById(R.id.foodStoreRatCustom);
           ImageView imageView2 = customView.findViewById(R.id.imageView2);
+
 
           foodStoreNameCustom.setText(foodStores.get(position));
           foodStoreCuisCustom.setText(foodStoreCuisineTypes.get(position));

@@ -5,6 +5,7 @@ Angelika Juliah S. Galang
 
 /* Code History:
 Initial Code Authored by: Angelika Juliah S. Galang
+Update 3/9/2018: Richelle Yap
 */
 
 /* File Creation Date: (Sprint 2) 2/21/2018
@@ -19,6 +20,7 @@ Initial Code Authored by: Angelika Juliah S. Galang
 
 package com.example.gelic.Sarapp;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -109,11 +111,12 @@ public class SubmitRating extends AppCompatActivity {
           foodStoreList = extras.getStringArrayList("foodstore");
           byteArray = extras.getByteArray("image");
           bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+          String rating1 = String.valueOf(extras.getFloat("rating"));
 
           _name.setText(foodStoreList.get(1));
           _location.setText(foodStoreList.get(2));
           _cuisineType.setText(foodStoreList.get(3));
-          _rating.setText(foodStoreList.get(4));
+          _rating.setText(rating1);
           _img.setImageBitmap(bmp);
           //LayerDrawable stars = (LayerDrawable) food_quality.getProgressDrawable();
           //stars.getDrawable(2).setColorFilter(Color.parseColor("@colors/dark_orange"), PorterDuff.Mode.SRC_ATOP);
@@ -166,6 +169,14 @@ public class SubmitRating extends AppCompatActivity {
                          Log.d("user_id",String.valueOf(user_id));
                          Log.d("store_id",String.valueOf(foodStoreId));
                          dbHandler.addRatingRelation(foodStoreId,  user_id);
+
+                         Intent resultIntent = new Intent();
+                         resultIntent.putExtras(extras);
+
+                         setResult(RESULT_OK, resultIntent);
+                         finish();
+
+
                     }
 
 

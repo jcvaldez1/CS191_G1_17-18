@@ -6,6 +6,7 @@ Angelika Juliah S. Galang
 /* Code History:
 Initial Code Authored by: Angelika Juliah S. Galang
 Update 2/21/2018: Angelika Juliah S. Galang
+Update 3/9/2018: Richelle Yap
 */
 
 /* File Creation Date: (Sprint 2) 2/4/2018 to 2/8/2018
@@ -233,7 +234,7 @@ public class DBHandler extends SQLiteOpenHelper {
      public ArrayList<Float> getFoodStore(int id) {
           ArrayList<Float> foodstore = new ArrayList<>();
           openDB();
-          Cursor cursor = db.query("FoodStore",null,"id=?", new String[]{String.valueOf(id)},null,null,null);
+          Cursor cursor = db.query("FoodStore", null, "id=?", new String[]{String.valueOf(id)}, null, null, null);
           cursor.moveToFirst();
           foodstore.add(cursor.getFloat(6));
           foodstore.add(cursor.getFloat(7));
@@ -259,7 +260,8 @@ public class DBHandler extends SQLiteOpenHelper {
           contentValues.put("rating_ctr", ctr);
           String[] whereArgs = {Integer.toString(id)};
           openDB();
-          long returnValue = db.update("FoodStore",contentValues, "ID=?", whereArgs);
+          long returnValue = db.update("FoodStore", contentValues, "ID=?", whereArgs);
+          Log.d("returnValueUpdateFS", String.valueOf(returnValue));
           closeDB();
           return returnValue;
      }
@@ -273,18 +275,18 @@ public class DBHandler extends SQLiteOpenHelper {
      Database Tables:
      Return Value:
      */
-     public long addRating(String d, float fq, float p, float s, float a, String c,float ave){
+     public long addRating(String d, float fq, float p, float s, float a, String c, float ave) {
           ContentValues contentValues = new ContentValues();
           contentValues.put("date", d);
-          contentValues.put("quality",fq);
-          contentValues.put("pricing",p);
-          contentValues.put("service",s);
-          contentValues.put("ambience",a);
-          contentValues.put("comment",c);
-          contentValues.put("average",ave);
+          contentValues.put("quality", fq);
+          contentValues.put("pricing", p);
+          contentValues.put("service", s);
+          contentValues.put("ambience", a);
+          contentValues.put("comment", c);
+          contentValues.put("average", ave);
           openDB();
           long returnValue = db.insert("Comment", null, contentValues);
-          Log.d("returnValue",String.valueOf(returnValue));
+          Log.d("returnValue", String.valueOf(returnValue));
           closeDB();
           return returnValue;
      }
@@ -298,12 +300,18 @@ public class DBHandler extends SQLiteOpenHelper {
      Database Tables:
      Return Value:
      */
-     public long addRatingRelation(int s_id, int u_id){
+     public long addRatingRelation(int s_id, int u_id) {
           ContentValues contentValues = new ContentValues();
           contentValues.put("store_id", s_id);
-          contentValues.put("user_id",u_id);
+          openDB();
+          Cursor temp = db.rawQuery("SELECT MAX(id) FROM COMMENT", null);
+          int x = (temp.moveToFirst() ? temp.getInt(0) : 0);
+          Log.d("LOOK AT X:", String.valueOf(x));
+          closeDB();
+          contentValues.put("user_id", x);
           openDB();
           long returnValue = db.insert("FoodStoreRating", null, contentValues);
+          Log.d("returnValueRelation", String.valueOf(returnValue));
           closeDB();
           return returnValue;
      }
@@ -317,23 +325,47 @@ public class DBHandler extends SQLiteOpenHelper {
      Database Tables:
      Return Value:
      */
-     public ArrayList<UserRatings> getAllRatings (int id){
+     public ArrayList<UserRatings> getAllRatings(int id) {
           UserRatings userRatings;
           ArrayList<UserRatings> userRatingList = new ArrayList<>();
           String _store_id = String.valueOf(id);
           openDB();
-          Cursor row = db.rawQuery("SELECT * FROM Comment INNER JOIN FoodStoreRating ON FoodStoreRating.user_id = Comment.id WHERE store_id = " + _store_id +";", null);
+          String query = "SELECT * FROM Comment INNER JOIN FoodStoreRating ON FoodStoreRating.user_id = Comment.id WHERE store_id = " + _store_id + ";";
+          Cursor row = db.rawQuery(query, null);
           row.moveToFirst();
 
           while (!row.isAfterLast()) {
-               userRatings = new UserRatings(row.getInt(0), row.getString(1),
+               int temp = row.getInt(row.getColumnIndex("store_id"));
+               userRatings = new UserRatings(row.getInt(row.getColumnIndex("id")), row.getString(1),
                          row.getFloat(2), row.getFloat(3), row.getFloat(4),
-                         row.getFloat(5), row.getString(6),row.getFloat(7));
-               userRatingList.add(userRatings);
+                         row.getFloat(5), row.getString(6), row.getFloat(7));
+               if (temp == id) {
+                    userRatingList.add(userRatings);
+               }
                row.moveToNext();
           }
           row.close();
           closeDB();
           return userRatingList;
+     }
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public float getNewRating(int id) {
+          openDB();
+          String query = "SELECT * FROM FoodStore WHERE id = " + id + ";";
+          Cursor row = db.rawQuery(query, null);
+          row.moveToFirst();
+          float rating = row.getFloat(row.getColumnIndex("rating"));
+          closeDB();
+          row.close();
+          return rating;
      }
 }

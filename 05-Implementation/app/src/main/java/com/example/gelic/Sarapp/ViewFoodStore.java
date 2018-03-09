@@ -6,6 +6,7 @@ Angelika Juliah S. Galang
 /* Code History:
 Initial Code Authored by: Angelika Juliah S. Galang
 Update 2/22/18: Angelika Juliah S. Galang
+Update 3/9/2018: Richelle Yap
 */
 
 /* File Creation Date: (Sprint 1) 2/4/2018 to 2/8/2018
@@ -45,6 +46,7 @@ import android.widget.Button;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import android.content.Intent;
 import android.view.View;
 
@@ -73,7 +75,7 @@ public class ViewFoodStore extends AppCompatActivity {
      ArrayAdapter<String> ratingAdapter;
      ListView ratingListView;
      int user_id = 0;
-
+     float temp_rating = 0;
 
      /*
      Method Name: onCreate
@@ -109,11 +111,13 @@ public class ViewFoodStore extends AppCompatActivity {
                Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
                id = Integer.parseInt(foodStoreList.get(0));
-               Log.d("id",String.valueOf(id));
+               Log.d("id", String.valueOf(id));
                name.setText(foodStoreList.get(1));
                location.setText(foodStoreList.get(2));
                cuisineType.setText(foodStoreList.get(3));
-               rating.setText(foodStoreList.get(4));
+               //rating.setText(foodStoreList.get(4));
+
+
                img.setImageBitmap(bmp);
 
           }
@@ -132,6 +136,9 @@ public class ViewFoodStore extends AppCompatActivity {
 
           ratings = dbHandler.getAllRatings(id);
 
+          temp_rating = dbHandler.getNewRating(id);
+          String temp = String.valueOf(temp_rating);
+          rating.setText(temp);
 
           for (UserRatings userRating : ratings) {
                ratingId.add(userRating.get_id());
@@ -147,10 +154,10 @@ public class ViewFoodStore extends AppCompatActivity {
                     ratingService, ratingAmbience, ratingComment, ratingAverage);
           ratingListView = findViewById(R.id.ratingList);
           ratingListView.setAdapter(ratingAdapter);
-          if (!ratingId.isEmpty()){
+          if (!ratingId.isEmpty()) {
                user_id = ratingId.get(ratingId.size() - 1);
           }
-
+          ratingListView.invalidateViews();
      }
 
      /*
@@ -164,15 +171,36 @@ public class ViewFoodStore extends AppCompatActivity {
       */
      public void launchSubmitRating(View view) {
           Bundle dataBundle = new Bundle();
-          dataBundle.putInt("id",id);
-          dataBundle.putInt("user_id",user_id);
-          dataBundle.putStringArrayList("foodstore",foodStoreList);
-          dataBundle.putByteArray("image",byteArray);
+          dataBundle.putInt("id", id);
+          dataBundle.putInt("user_id", user_id);
+          dataBundle.putStringArrayList("foodstore", foodStoreList);
+          dataBundle.putByteArray("image", byteArray);
+          dataBundle.putFloat("rating", temp_rating);
 
 
           Intent intent = new Intent(this, SubmitRating.class);
           intent.putExtras(dataBundle);
-          startActivity(intent);
+          startActivityForResult(intent, 1);
+     }
+
+     /*
+     Method Name: onActivityResult
+     Creation Date: 3/9/2018
+     Purpose: refreshes View Food Store activity when Submit Rating activity returns
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value: None
+      */
+     @Override
+     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+          super.onActivityResult(requestCode, resultCode, data);
+          if (resultCode == RESULT_OK) {
+               Intent refresh = new Intent(this, ViewFoodStore.class);
+               refresh.putExtras(data.getExtras());
+               startActivity(refresh);
+               this.finish();
+          }
      }
 
 }
