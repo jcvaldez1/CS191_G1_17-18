@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  foodquality: 1
+  pricing: 1
+  service: 1
+  ambience: 1
+  comment: MyText
+  average: 1.5
+
+two:
+  foodquality: 1
+  pricing: 1
+  service: 1
+  ambience: 1
+  comment: MyText
+  average: 1.5

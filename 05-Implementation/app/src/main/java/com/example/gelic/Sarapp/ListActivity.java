@@ -88,8 +88,8 @@ public class ListActivity extends AppCompatActivity {
           }
 
 
-
           foodStores = dbHandler.getAllFoodStores();
+
 
           for (FoodStores foodStore : foodStores) {
                foodStoreId.add(foodStore.get_id());
