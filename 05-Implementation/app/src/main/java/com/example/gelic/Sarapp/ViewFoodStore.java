@@ -89,6 +89,7 @@ public class ViewFoodStore extends AppCompatActivity {
      @Override
      protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
+
           overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
           ratingButton = findViewById(R.id.button_id1);
           googleMapButton = findViewById(R.id.button_id2);
@@ -104,14 +105,15 @@ public class ViewFoodStore extends AppCompatActivity {
 
           dbHandler = new DBHandler(this);
           extras = getIntent().getExtras();
+
           if (extras != null) {
 
                foodStoreList = extras.getStringArrayList("foodstore");
                byteArray = extras.getByteArray("image");
                Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
                id = Integer.parseInt(foodStoreList.get(0));
-               Log.d("id", String.valueOf(id));
+               //Log.d("view_food", foodStoreList.get(0));
+
                name.setText(foodStoreList.get(1));
                location.setText(foodStoreList.get(2));
                cuisineType.setText(foodStoreList.get(3));
@@ -141,6 +143,7 @@ public class ViewFoodStore extends AppCompatActivity {
           rating.setText(temp);
 
           for (UserRatings userRating : ratings) {
+
                ratingId.add(userRating.get_id());
                ratingDate.add(userRating.get_date());
                ratingQuality.add(userRating.get_quality());
@@ -150,10 +153,12 @@ public class ViewFoodStore extends AppCompatActivity {
                ratingComment.add(userRating.get_comment());
                ratingAverage.add(userRating.get_average());
           }
+
           ratingAdapter = new CustomRowAdapterRating(this, ratingDate, ratingQuality, ratingPricing,
                     ratingService, ratingAmbience, ratingComment, ratingAverage);
           ratingListView = findViewById(R.id.ratingList);
           ratingListView.setAdapter(ratingAdapter);
+
           if (!ratingId.isEmpty()) {
                user_id = ratingId.get(ratingId.size() - 1);
           }

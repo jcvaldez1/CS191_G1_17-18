@@ -44,6 +44,14 @@ public class FoodStores {
           this._rating = rating;
           this._image = img;
      }
+     public FoodStores(String name, String loc, String cuisine, float rating, Bitmap img) {
+          //this._id = id;
+          this._foodStoreName = name;
+          this._foodStoreLocation = loc;
+          this._cuisineType = cuisine;
+          this._rating = rating;
+          this._image = img;
+     }
 
      public int get_id() {
           return _id;

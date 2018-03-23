@@ -43,7 +43,8 @@ Purpose of file: Layouts the activity_main showing the main menu of the app -->
 
                android:layout_marginTop="38dp"
                android:adjustViewBounds="true"
-               android:background="@color/orange"
+               android:background="@drawable/flat_button_bg"
+               android:onClick="launchSearchList"
                app:srcCompat="@mipmap/main_activity_search" />
      </LinearLayout>
 
