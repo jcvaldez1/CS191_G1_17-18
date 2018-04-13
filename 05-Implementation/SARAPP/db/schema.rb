@@ -10,7 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180307072313) do
+# “This is a course requirement for CS 192 Software Engineering II
+# under the supervision of Asst. Prof. Ma. Rowena C. Solamo of the
+# Department of Computer Science, College of Engineering,
+# University of the Philippines, Diliman for the AY 2015-2016”.
+
+# Julian Troy C. Valdez
+
+#  Code History:
+# Initial Code Authored by: Julian Troy C. Valdez
+#
+#  File Creation Date: (Sprint 2) 2/17/2018 to 2/18/2018
+#      Development Group: Group 1
+#      Client Group: CS 192 Class
+#      Purpose of File: Define methods for the User controller
+
+# UPDATED AT : 4/13/2018:
+# =>  table food_stores -> added image column which contains URL
+
+
+ActiveRecord::Schema.define(version: 20180412153259) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "food_stores", force: :cascade do |t|
     t.string "name"
@@ -21,6 +43,7 @@ ActiveRecord::Schema.define(version: 20180307072313) do
     t.float "sarapp_rating"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "image"
   end
 
   create_table "users", force: :cascade do |t|

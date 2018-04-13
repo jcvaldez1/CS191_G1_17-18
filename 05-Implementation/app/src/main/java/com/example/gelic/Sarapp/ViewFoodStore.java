@@ -32,6 +32,7 @@ package com.example.gelic.Sarapp;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,15 +44,24 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import android.content.Intent;
 import android.view.View;
 
-public class ViewFoodStore extends AppCompatActivity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+public class ViewFoodStore extends AppCompatActivity{
+     String resultJson = "";
      int id;
      TextView name;
      TextView location;
@@ -62,16 +72,16 @@ public class ViewFoodStore extends AppCompatActivity {
      ArrayList<String> foodStoreList;
      byte[] byteArray;
      Bundle extras;
-     DBHandler dbHandler;
+   //  DBHandler dbHandler;
      ArrayList<UserRatings> ratings;
      ArrayList<Integer> ratingId = new ArrayList<>();
      ArrayList<String> ratingDate = new ArrayList<>();
-     ArrayList<Float> ratingQuality = new ArrayList<>();
-     ArrayList<Float> ratingPricing = new ArrayList<>();
-     ArrayList<Float> ratingService = new ArrayList<>();
-     ArrayList<Float> ratingAmbience = new ArrayList<>();
+     ArrayList<Integer> ratingQuality = new ArrayList<>();
+     ArrayList<Integer> ratingPricing = new ArrayList<>();
+     ArrayList<Integer> ratingService = new ArrayList<>();
+     ArrayList<Integer> ratingAmbience = new ArrayList<>();
      ArrayList<String> ratingComment = new ArrayList<>();
-     ArrayList<Float> ratingAverage = new ArrayList<>();
+     ArrayList<Double> ratingAverage = new ArrayList<>();
      ArrayAdapter<String> ratingAdapter;
      ListView ratingListView;
      int user_id = 0;
@@ -101,30 +111,36 @@ public class ViewFoodStore extends AppCompatActivity {
           location = findViewById(R.id.foodStoreLoc);
           cuisineType = findViewById(R.id.foodStoreCuis);
           rating = findViewById(R.id.foodStoreRat);
-          img = findViewById(R.id.imageView);
+          // img = findViewById(R.id.imageView);
 
-          dbHandler = new DBHandler(this);
+          // dbHandler = new DBHandler(this);
           extras = getIntent().getExtras();
 
           if (extras != null) {
 
                foodStoreList = extras.getStringArrayList("foodstore");
-               byteArray = extras.getByteArray("image");
-               Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//               byteArray = extras.getByteArray("image");
+//               Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                id = Integer.parseInt(foodStoreList.get(0));
+               Log.d("idView",String.valueOf(id));
+               ParseTask asynctask = new ParseTask(this);
+               asynctask.execute();
+               //new ParseTask().execute(this);
                //Log.d("view_food", foodStoreList.get(0));
 
                name.setText(foodStoreList.get(1));
                location.setText(foodStoreList.get(2));
                cuisineType.setText(foodStoreList.get(3));
-               //rating.setText(foodStoreList.get(4));
+               rating.setText(foodStoreList.get(4));
+               new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                         .execute(foodStoreList.get(5));
 
 
-               img.setImageBitmap(bmp);
+               //img.setImageBitmap(bmp);
 
           }
 
-          try {
+         /* try {
                dbHandler.createDB();
           } catch (IOException ioe) {
                throw new Error("Unable to create database");
@@ -133,12 +149,12 @@ public class ViewFoodStore extends AppCompatActivity {
                dbHandler.openDB();
           } catch (SQLiteException sqle) {
                throw sqle;
-          }
+          }*/
 
 
-          ratings = dbHandler.getAllRatings(id);
+         /*ratings = dbHandler.getAllRatings(id);
 
-          temp_rating = dbHandler.getNewRating(id);
+          //temp_rating = dbHandler.getNewRating(id);
           String temp = String.valueOf(temp_rating);
           rating.setText(temp);
 
@@ -152,6 +168,44 @@ public class ViewFoodStore extends AppCompatActivity {
                ratingAmbience.add(userRating.get_ambience());
                ratingComment.add(userRating.get_comment());
                ratingAverage.add(userRating.get_average());
+
+          ratings = dbHandler.getAllRatings(id);*/
+          Log.d("hello", "hello");
+
+          Log.d("resultJson", resultJson);
+
+     }
+     public void updateAdapter(String resultJson) {
+          Log.d("resultJson", resultJson);
+          try {
+               JSONObject jsonObject = new JSONObject(resultJson);
+               JSONArray jsonArray = jsonObject.getJSONArray("data");
+               int count = 0;
+
+//<<<<<<< Updated upstream
+//          temp_rating = dbHandler.getNewRating(id);
+//          String temp = String.valueOf(temp_rating);
+//          rating.setText(temp);
+//=======
+               while (count < jsonArray.length()) {
+                    JSONObject JO = jsonArray.getJSONObject(count);
+                    ratingId.add(JO.getInt("id"));
+                    ratingQuality.add(JO.getInt("foodquality"));
+                    ratingPricing.add(JO.getInt("pricing"));
+                    ratingService.add(JO.getInt("service"));
+                    ratingAmbience.add(JO.getInt("ambience"));
+                    ratingComment.add(JO.getString("comment"));
+                    ratingAverage.add(JO.getDouble("average"));
+                    ratingDate.add(JO.getString("created_at"));
+                    //  foodStore = new FoodStores()
+                    //foodStoreList.add(foodStore);
+                    //foodAdapter.add(foodStores);
+                    count++;
+//>>>>>>> Stashed changes
+
+               }
+          } catch (JSONException e) {
+               e.printStackTrace();
           }
 
           ratingAdapter = new CustomRowAdapterRating(this, ratingDate, ratingQuality, ratingPricing,
@@ -163,6 +217,51 @@ public class ViewFoodStore extends AppCompatActivity {
                user_id = ratingId.get(ratingId.size() - 1);
           }
           ratingListView.invalidateViews();
+     }
+
+     public class ParseTask extends AsyncTask<Void, Void, String> {
+
+          HttpURLConnection urlConnection = null;
+          BufferedReader reader = null;
+          private ViewFoodStore foodstore_page;
+
+          public ParseTask(ViewFoodStore foodstore_page) {
+               this.foodstore_page = foodstore_page;
+          }
+
+          @Override
+          protected String doInBackground(Void... params) {
+               try {
+
+                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/user/" + String.valueOf(id);
+                    URL url = new URL(site_url_json);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                         buffer.append(line);
+                    }
+
+                    resultJson = buffer.toString();
+                    Log.d("json_result_view", resultJson);
+               } catch (Exception e) {
+                    e.printStackTrace();
+               }
+               return resultJson;
+          }
+
+          protected void onPostExecute(String strJson) {
+               super.onPostExecute(strJson);
+               foodstore_page.updateAdapter(strJson);
+          }
      }
 
      /*

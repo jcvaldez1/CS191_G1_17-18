@@ -45,6 +45,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.view.Menu;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,11 +60,12 @@ public class SearchListActivity extends AppCompatActivity {
      ArrayList<String> foodStoreNames = new ArrayList<>();
      ArrayList<String> foodStoreCuisineTypes = new ArrayList<>();
      ArrayList<String> foodStoreLocations = new ArrayList<>();
-     ArrayList<Float> foodStoreRatings = new ArrayList<>();
-     ArrayList<Bitmap> foodStoreImages = new ArrayList<>();
+     ArrayList<String> foodStoreRatings = new ArrayList<>();
+     ArrayList<String> foodStoreImages = new ArrayList<>();
      SearchRowAdapter foodAdapter;
      ListView foodListView;
-     DBHandler dbHandler;
+     FoodStores foodStore;
+     //DBHandler dbHandler;
 
 
      /*
@@ -77,7 +82,7 @@ public class SearchListActivity extends AppCompatActivity {
           super.onCreate(savedInstanceState);
           setContentView(R.layout.activity_search_list);
           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-          dbHandler = new DBHandler(this);
+          /*dbHandler = new DBHandler(this);
 
           try {
                dbHandler.createDB();
@@ -88,20 +93,51 @@ public class SearchListActivity extends AppCompatActivity {
                dbHandler.openDB();
           } catch (SQLiteException sqle) {
                throw sqle;
-          }
+          }*/
 
 
-          foodStores = dbHandler.getAllFoodStores();
+         // foodStores = dbHandler.getAllFoodStores();
 
 
-          for (FoodStores foodStore : foodStores) {
+          /*for (FoodStores foodStore : foodStores) {
                foodStoreId.add(foodStore.get_id());
                foodStoreNames.add(foodStore.get_foodStoreName());
                foodStoreCuisineTypes.add(foodStore.get_cuisineType());
                foodStoreLocations.add(foodStore.get_foodStoreLocation());
                foodStoreRatings.add(foodStore.get_rating());
                foodStoreImages.add(foodStore.get_image());
+          }*/
+          String JSON_STR = getIntent().getExtras().getString("JSON_DATA");
+          Log.d("json_list",JSON_STR);
+          try {
+               JSONObject jsonObject = new JSONObject(JSON_STR);
+               JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+               int count = 0;
+
+               while (count < jsonArray.length()){
+                    JSONObject JO = jsonArray.getJSONObject(count);
+                    foodStoreId.add(JO.getInt("id"));
+                    foodStoreNames.add(JO.getString("name"));
+                    foodStoreLocations.add(JO.getString("location"));
+                    foodStoreCuisineTypes.add(JO.getString("cuisineType"));
+                    foodStoreRatings.add(JO.getString("sarapp_rating"));
+                    foodStoreImages.add(JO.getString("image"));
+                    foodStore = new FoodStores(foodStoreId.get(count),
+                              foodStoreNames.get(count),
+                              foodStoreLocations.get(count),foodStoreCuisineTypes.get(count),
+                              foodStoreRatings.get(count),
+                              foodStoreImages.get(count));
+                    foodStores.add(foodStore);
+                    //foodStoreList.add(foodStore);
+                    //foodAdapter.add(foodStores);
+                    count++;
+
+               }
+          } catch (JSONException e) {
+               e.printStackTrace();
           }
+
           foodAdapter = new SearchRowAdapter(this, foodStores);
           foodListView = findViewById(R.id.foodStoreList_search);
           foodListView.setAdapter(foodAdapter);
@@ -139,25 +175,28 @@ public class SearchListActivity extends AppCompatActivity {
                               Log.d("on_item2", String.valueOf(temp.get_rating()));
 
 
-                              //rowAttributes.add(String.valueOf(temp.get_id()));
+
+                            //  rowAttributes.add(String.valueOf(temp.get_id()));
                               //mag-eerror kapag may same food store name
-                              rowAttributes.add(String.valueOf(foodStoreNames.indexOf(temp.get_foodStoreName())+1));
+                              int yes = foodStoreNames.indexOf(temp.get_foodStoreName());
+                              rowAttributes.add(String.valueOf(foodStoreId.get(yes)));
+                             Log.d("indexof",String.valueOf(foodStoreId.get(yes)));
                               rowAttributes.add(temp.get_foodStoreName());
                               rowAttributes.add(temp.get_foodStoreLocation());
                               rowAttributes.add(temp.get_cuisineType());
                               rowAttributes.add(String.valueOf(temp.get_rating()));
-
+                              rowAttributes.add(temp.get_image());
                               //rowAttributes.add(foodStoreNames.get(i));
                               //rowAttributes.add(foodStoreLocations.get(i));
                               //rowAttributes.add(foodStoreCuisineTypes.get(i));
                               //rowAttributes.add(String.valueOf(foodStoreRatings.get(i)));
 
-                              stream = new ByteArrayOutputStream();
-                              temp.get_image().compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                             // stream = new ByteArrayOutputStream();
+                              //temp.get_image().compress(Bitmap.CompressFormat.JPEG, 100, stream);
                               //foodStoreImages.get(i).compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                              byteArray = stream.toByteArray();
+                             // byteArray = stream.toByteArray();
 
-                              dataBundle.putByteArray("image", byteArray);
+                              //dataBundle.putByteArray("image", byteArray);
                               dataBundle.putStringArrayList("foodstore", rowAttributes);
 
                               intent = new Intent(getApplicationContext(), ViewFoodStore.class);

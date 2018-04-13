@@ -27,16 +27,16 @@ package com.example.gelic.Sarapp;
 import android.graphics.Bitmap;
 
 public class FoodStores {
-     private int _id;
+     private Integer _id;
      private String _foodStoreName;
      private String _foodStoreLocation;
      private String _cuisineType;
-     private float _rating;
-     private Bitmap _image;
+     private String _rating;
+     private String _image;
 
 
 
-     public FoodStores(int id, String name, String loc, String cuisine, float rating, Bitmap img) {
+     public FoodStores(Integer id,String name, String loc, String cuisine, String rating, String img) {
           this._id = id;
           this._foodStoreName = name;
           this._foodStoreLocation = loc;
@@ -44,14 +44,15 @@ public class FoodStores {
           this._rating = rating;
           this._image = img;
      }
-     public FoodStores(String name, String loc, String cuisine, float rating, Bitmap img) {
+     public FoodStores(String name, String loc, String cuisine, String rating) {
           //this._id = id;
           this._foodStoreName = name;
           this._foodStoreLocation = loc;
           this._cuisineType = cuisine;
           this._rating = rating;
-          this._image = img;
+         // this._image = img;
      }
+
 
      public int get_id() {
           return _id;
@@ -85,19 +86,19 @@ public class FoodStores {
           this._cuisineType = _cuisineType;
      }
 
-     public float get_rating() {
+     public String get_rating() {
           return _rating;
      }
 
-     public void set_rating(float _rating) {
+     public void set_rating(String _rating) {
           this._rating = _rating;
      }
 
-     public Bitmap get_image() {
+     public String get_image() {
           return _image;
      }
 
-     public void set_image(Bitmap _image) {
+     public void set_image(String _image) {
           this._image = _image;
      }
 

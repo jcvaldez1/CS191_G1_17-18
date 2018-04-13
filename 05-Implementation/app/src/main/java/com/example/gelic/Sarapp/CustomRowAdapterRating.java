@@ -33,17 +33,17 @@ import java.util.ArrayList;
 class CustomRowAdapterRating extends ArrayAdapter<String> {
 
      ArrayList<String> ratingDate;
-     ArrayList<Float> ratingQuality;
-     ArrayList<Float> ratingPricing;
-     ArrayList<Float> ratingService;
-     ArrayList<Float> ratingAmbience;
+     ArrayList<Integer> ratingQuality;
+     ArrayList<Integer> ratingPricing;
+     ArrayList<Integer> ratingService;
+     ArrayList<Integer> ratingAmbience;
      ArrayList<String> ratingComment;
-     ArrayList<Float> ratingAverage;
+     ArrayList<Double> ratingAverage;
 
 
-     CustomRowAdapterRating(Context context, ArrayList<String> ratingDate, ArrayList<Float> ratingQuality, ArrayList<Float> ratingPricing,
-                      ArrayList<Float> ratingService, ArrayList<Float> ratingAmbience, ArrayList<String> ratingComment,
-                      ArrayList<Float> ratingAverage) {
+     CustomRowAdapterRating(Context context, ArrayList<String> ratingDate, ArrayList<Integer> ratingQuality, ArrayList<Integer> ratingPricing,
+                      ArrayList<Integer> ratingService, ArrayList<Integer> ratingAmbience, ArrayList<String> ratingComment,
+                      ArrayList<Double> ratingAverage) {
           super(context, R.layout.custom_list_row_rating, ratingDate);
 
           this.ratingDate = ratingDate;

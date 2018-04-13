@@ -169,61 +169,37 @@ Purpose of file: Layouts the submit rating screen -->
 
           <RatingBar
                android:id="@+id/food_quality"
-               android:isIndicator="false"
-               android:scaleX="0.5"
-               android:scaleY="0.5"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:numStars="5"
-               android:stepSize="1"
-               android:transformPivotX="0dp"
-               android:transformPivotY="0dp"
-               style="@style/RatingBar"
+               android:theme="@style/RatingBar2"
                android:layout_marginBottom="-15dp"/>
 
           <TextView android:text="@string/pricing" />
 
           <RatingBar
                android:id="@+id/pricing"
-               android:scaleX="0.5"
-               android:scaleY="0.5"
-               android:transformPivotX="0dp"
-               android:transformPivotY="0dp"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:numStars="5"
-               android:stepSize="1"
-               style="@style/RatingBar"
+               android:theme="@style/RatingBar2"
                android:layout_marginBottom="-15dp"/>
 
           <TextView android:text="@string/service" />
 
           <RatingBar
                android:id="@+id/service"
-               android:scaleX="0.5"
-               android:scaleY="0.5"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:numStars="5"
-               android:stepSize="1"
-               android:transformPivotX="0dp"
-               android:transformPivotY="0dp"
-               style="@style/RatingBar"
+               android:theme="@style/RatingBar2"
                android:layout_marginBottom="-15dp"/>
 
           <TextView android:text="@string/ambience" />
 
           <RatingBar
                android:id="@+id/ambience"
-               android:scaleX="0.5"
-               android:scaleY="0.5"
+               android:isIndicator="false"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:numStars="5"
-               android:stepSize="1"
-               android:transformPivotX="0dp"
-               android:transformPivotY="0dp"
-               style="@style/RatingBar"
+               android:theme="@style/RatingBar2"
                android:layout_marginBottom="-15dp"/>
      </GridLayout>
 
@@ -233,7 +209,8 @@ Purpose of file: Layouts the submit rating screen -->
          android:layout_height="wrap_content"
          android:ems="10"
          android:inputType="textPersonName"
-         app:layout_constraintTop_toBottomOf="@+id/submit_rating_grid_layout" />
+         app:layout_constraintTop_toBottomOf="@+id/submit_rating_grid_layout"
+          android:hint = "Comment here..."/>
 
      <TextView
          android:id="@+id/ratingText"
@@ -247,6 +224,7 @@ Purpose of file: Layouts the submit rating screen -->
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:text="Submit"
+          android:background="@drawable/submitrating_button_bg"
           app:layout_constraintTop_toBottomOf="@id/submitText"
           tools:layout_editor_absoluteY="51dp" />
 </android.support.constraint.ConstraintLayout>

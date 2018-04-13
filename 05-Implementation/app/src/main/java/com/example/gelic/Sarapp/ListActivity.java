@@ -38,10 +38,16 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,11 +58,11 @@ public class ListActivity extends AppCompatActivity {
      ArrayList<String> foodStoreNames = new ArrayList<>();
      ArrayList<String> foodStoreCuisineTypes = new ArrayList<>();
      ArrayList<String> foodStoreLocations = new ArrayList<>();
-     ArrayList<Float> foodStoreRatings = new ArrayList<>();
-     ArrayList<Bitmap> foodStoreImages = new ArrayList<>();
+     ArrayList<String> foodStoreRatings = new ArrayList<>();
+     ArrayList<String> foodStoreImages = new ArrayList<>();
      ArrayAdapter<String> foodAdapter;
      ListView foodListView;
-     DBHandler dbHandler;
+    // DBHandler dbHandler;
 
 
 
@@ -74,7 +80,7 @@ public class ListActivity extends AppCompatActivity {
           super.onCreate(savedInstanceState);
           setContentView(R.layout.activity_list);
           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-          dbHandler = new DBHandler(this);
+        /*  dbHandler = new DBHandler(this);
 
           try {
                dbHandler.createDB();
@@ -85,22 +91,37 @@ public class ListActivity extends AppCompatActivity {
                dbHandler.openDB();
           } catch (SQLiteException sqle) {
                throw sqle;
+          }*/
+
+
+          String JSON_STR = getIntent().getExtras().getString("JSON_DATA");
+          Log.d("json_str",JSON_STR);
+          try {
+               JSONObject jsonObject = new JSONObject(JSON_STR);
+               JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+               int count = 0;
+
+               while (count < jsonArray.length()){
+                    JSONObject JO = jsonArray.getJSONObject(count);
+                    foodStoreId.add(JO.getInt("id"));
+                    foodStoreNames.add(JO.getString("name"));
+                    foodStoreLocations.add(JO.getString("location"));
+                    foodStoreCuisineTypes.add(JO.getString("cuisineType"));
+                    foodStoreRatings.add(JO.getString("sarapp_rating"));
+                    foodStoreImages.add(JO.getString("image"));
+                    //  foodStore = new FoodStores()
+                    //foodStoreList.add(foodStore);
+                    //foodAdapter.add(foodStores);
+                    count++;
+
+               }
+          } catch (JSONException e) {
+               e.printStackTrace();
           }
 
-
-          foodStores = dbHandler.getAllFoodStores();
-
-
-          for (FoodStores foodStore : foodStores) {
-               foodStoreId.add(foodStore.get_id());
-               foodStoreNames.add(foodStore.get_foodStoreName());
-               foodStoreCuisineTypes.add(foodStore.get_cuisineType());
-               foodStoreLocations.add(foodStore.get_foodStoreLocation());
-               foodStoreRatings.add(foodStore.get_rating());
-               foodStoreImages.add(foodStore.get_image());
-          }
           foodAdapter = new CustomRowAdapter(this, foodStoreNames, foodStoreCuisineTypes,
-                    foodStoreLocations, foodStoreRatings, foodStoreImages);
+                    foodStoreLocations, foodStoreRatings,foodStoreImages);
           foodListView = findViewById(R.id.foodStoreList);
           foodListView.setAdapter(foodAdapter);
 
@@ -129,16 +150,18 @@ public class ListActivity extends AppCompatActivity {
                               Intent intent;
 
                               rowAttributes.add(String.valueOf(foodStoreId.get(i)));
+                              Log.d("idFS",String.valueOf(foodStoreId.get(i)));
                               rowAttributes.add(foodStoreNames.get(i));
                               rowAttributes.add(foodStoreLocations.get(i));
                               rowAttributes.add(foodStoreCuisineTypes.get(i));
                               rowAttributes.add(String.valueOf(foodStoreRatings.get(i)));
+                              rowAttributes.add(foodStoreImages.get(i));
 
-                              stream = new ByteArrayOutputStream();
-                              foodStoreImages.get(i).compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                              byteArray = stream.toByteArray();
+                            ///  stream = new ByteArrayOutputStream();
+                            //  foodStoreImages.get(i).compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                              //byteArray = stream.toByteArray();
 
-                              dataBundle.putByteArray("image", byteArray);
+                              //dataBundle.putByteArray("image", byteArray);
                               dataBundle.putStringArrayList("foodstore", rowAttributes);
 
                               intent = new Intent(getApplicationContext(), ViewFoodStore.class);

@@ -32,6 +32,9 @@ package com.example.gelic.Sarapp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 class CustomRowAdapter extends ArrayAdapter<String> {
@@ -46,20 +54,20 @@ class CustomRowAdapter extends ArrayAdapter<String> {
      ArrayList<String> foodStores;
      ArrayList<String> foodStoreCuisineTypes;
      ArrayList<String> foodStoreLocations;
-     ArrayList<Float> foodStoreRatings;
-     ArrayList<Bitmap> foodStoreImages;
+     ArrayList<String> foodStoreRatings;
+   ArrayList<String> foodStoreImages;
 
 
      CustomRowAdapter(Context context, ArrayList<String> foodStores, ArrayList<String> foodStoreCuisineTypes,
-                      ArrayList<String> foodStoreLocations, ArrayList<Float> foodStoreRatings,
-                      ArrayList<Bitmap> foodStoreImages) {
+                      ArrayList<String> foodStoreLocations, ArrayList<String> foodStoreRatings,
+                         ArrayList<String> foodStoreImages) {
           super(context, R.layout.custom_list_row, foodStores);
 
           this.foodStores = foodStores;
           this.foodStoreCuisineTypes = foodStoreCuisineTypes;
           this.foodStoreLocations = foodStoreLocations;
           this.foodStoreRatings = foodStoreRatings;
-          this.foodStoreImages = foodStoreImages;
+         this.foodStoreImages = foodStoreImages;
 
      }
 
@@ -85,15 +93,21 @@ class CustomRowAdapter extends ArrayAdapter<String> {
           TextView foodStoreCuisCustom = customView.findViewById(R.id.foodStoreCuisCustom);
           TextView foodStoreLocCustom = customView.findViewById(R.id.foodStoreLocCustom);
           TextView foodStoreRatCustom = customView.findViewById(R.id.foodStoreRatCustom);
-          ImageView imageView2 = customView.findViewById(R.id.imageView2);
+
+         // ImageView imageView2 = customView.findViewById(R.id.imageView2);
 
 
           foodStoreNameCustom.setText(foodStores.get(position));
           foodStoreCuisCustom.setText(foodStoreCuisineTypes.get(position));
           foodStoreLocCustom.setText(foodStoreLocations.get(position));
           foodStoreRatCustom.setText(String.valueOf(foodStoreRatings.get(position)));
-          imageView2.setImageBitmap(foodStoreImages.get(position));
+          //Picasso.with(context).load(URL).fit().centerCrop().into(imageView);
+          new DownloadImageTask((ImageView) customView.findViewById(R.id.imageView2))
+                    .execute(foodStoreImages.get(position));
+          //imageView2.setImageBitmap(bmp);
 
           return customView;
      }
+
+
 }

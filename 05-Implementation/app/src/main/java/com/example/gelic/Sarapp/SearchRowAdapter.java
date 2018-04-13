@@ -124,14 +124,15 @@ public class SearchRowAdapter extends BaseAdapter implements Filterable {
           TextView foodStoreCuisCustom = customView.findViewById(R.id.foodStoreCuisCustom);
           TextView foodStoreLocCustom = customView.findViewById(R.id.foodStoreLocCustom);
           TextView foodStoreRatCustom = customView.findViewById(R.id.foodStoreRatCustom);
-          ImageView imageView2 = customView.findViewById(R.id.imageView2);
+
 
 
           foodStoreNameCustom.setText(foodStores.get(pos).get_foodStoreName());
           foodStoreCuisCustom.setText(foodStores.get(pos).get_cuisineType());
           foodStoreLocCustom.setText(foodStores.get(pos).get_foodStoreLocation());
-          foodStoreRatCustom.setText(String.valueOf(foodStores.get(pos).get_rating()));
-          imageView2.setImageBitmap(foodStores.get(pos).get_image());
+          foodStoreRatCustom.setText(foodStores.get(pos).get_rating());
+          new DownloadImageTask((ImageView) customView.findViewById(R.id.imageView2))
+                    .execute(foodStores.get(pos).get_image());
 
           return customView;
      }
@@ -178,11 +179,13 @@ public class SearchRowAdapter extends BaseAdapter implements Filterable {
 
                     for(int i=0;i<foodStoreList.size();i++) {
                          if(foodStoreList.get(i).get_foodStoreName().toUpperCase().contains(constraint)) {
-                              FoodStores p=new FoodStores(foodStoreList.get(i).get_foodStoreName(),
+                              FoodStores p=new FoodStores(foodStoreList.get(i).get_id(),
+                                        foodStoreList.get(i).get_foodStoreName(),
                                         foodStoreList.get(i).get_foodStoreLocation(),
                                         foodStoreList.get(i).get_cuisineType(),
                                         foodStoreList.get(i).get_rating(),
-                                        foodStoreList.get(i).get_image());
+                                        foodStoreList.get(i).get_image()
+                                        );
 
                               filters.add(p);
                          }

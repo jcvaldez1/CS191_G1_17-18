@@ -13,6 +13,9 @@
 #      Client Group: CS 192 Class
 #      Purpose of File: Define methods for the User controller
 
+# UPDATED AT : 4/13/2018:
+# =>  updateFoodStoreFields -> Made adjustments to regulate decimal places for the ratings
+
 
  # Variable Descriptions:
  #     user = User objects that contains the attributes: fooquality, pricing, service, ambience, comment, and average
@@ -53,7 +56,7 @@ class UserController < ApplicationController
     def updateFoodStoreFields(prams , average)
          food = FoodStore.find(prams)
          food.update(curr_sum:food.curr_sum + average , num_of_rating:food.num_of_rating + 1)
-         food.update(sarapp_rating:food.curr_sum/food.num_of_rating)
+         food.update(sarapp_rating:(food.curr_sum/food.num_of_rating)/1.0)
     end
 
      # Method Name: getAverage
