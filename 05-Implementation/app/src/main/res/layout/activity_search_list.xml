@@ -16,6 +16,14 @@ Purpose of file: Layouts the search activity -->
      android:layout_height="match_parent"
      tools:context="com.example.gelic.Sarapp.SearchListActivity">
 
+     <ProgressBar
+         android:layout_centerInParent="true"
+         android:id="@+id/progressBar"
+         style="?android:attr/progressBarStyle"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:theme="@style/Progressbar"/>
+
      <ListView
          android:id="@+id/foodStoreList_search"
          android:layout_width="match_parent"

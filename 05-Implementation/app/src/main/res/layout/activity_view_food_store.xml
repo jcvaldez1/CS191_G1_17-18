@@ -136,31 +136,15 @@ Purpose of file: Layouts the activity that shows the food store profile -->
              android:fontFamily="@font/roboto_medium"
              android:text="@string/ratings"
              android:textAllCaps="false"
-             android:textColor="@color/white"
-             app:layout_constraintRight_toLeftOf="@id/button_id2" />
-
-        <Button
-             android:id="@+id/button_id2"
-             style="?android:attr/borderlessButtonStyle"
-             android:layout_width="fill_parent"
-             android:layout_height="48dp"
-             android:layout_weight="1"
-             android:background="@color/light_orange"
-             android:fontFamily="@font/roboto_medium"
-             android:text="Google Map"
-             android:textAllCaps="false"
-             android:textColor="@color/black"
-             app:layout_constraintLeft_toRightOf="@id/button_id1"
-             tools:layout_editor_absoluteX="192dp"
-             tools:layout_editor_absoluteY="198dp" />
+             android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
          android:id="@+id/linear_layout999_id"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         app:layout_constraintTop_toBottomOf="@id/linear_layout1_id">
-        `
+         app:layout_constraintTop_toBottomOf="@id/linear_layout1_id"
+         android:orientation="vertical">
 
         <Button
              android:id="@+id/button_id3"
@@ -176,6 +160,13 @@ Purpose of file: Layouts the activity that shows the food store profile -->
              android:text="Submit Rating"
              android:textAllCaps="false"
              android:textColor="@color/dark_orange" />
+
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@+id/progressBar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/Progressbar" />
 
     </LinearLayout>
 
@@ -193,6 +184,8 @@ Purpose of file: Layouts the activity that shows the food store profile -->
              android:layout_width="match_parent"
              android:layout_height="match_parent">
             <!-- have whatever children you want inside -->
+
+
             <ListView
                  android:id="@+id/ratingList"
                  android:layout_width="wrap_content"
@@ -202,12 +195,6 @@ Purpose of file: Layouts the activity that shows the food store profile -->
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
-
-
-
-
-
-
 
 
 </android.support.constraint.ConstraintLayout>

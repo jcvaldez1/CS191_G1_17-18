@@ -8,7 +8,7 @@
 #  Code History:
 # Initial Code Authored by: Julian Troy C. Valdez
 #
-#  File Creation Date: (Sprint 2) 2/17/2018 to 2/18/2018
+#   File Creation Date: (Sprint 2) 2/17/2018 to 2/18/2018
 #      Development Group: Group 1
 #      Client Group: CS 192 Class
 #      Purpose of File: Define the entry properties for the FoodStore model

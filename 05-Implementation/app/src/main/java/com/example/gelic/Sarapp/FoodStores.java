@@ -24,7 +24,6 @@ Initial Code Authored by: Angelika Juliah S. Galang
 
 package com.example.gelic.Sarapp;
 
-import android.graphics.Bitmap;
 
 public class FoodStores {
      private Integer _id;
@@ -43,14 +42,6 @@ public class FoodStores {
           this._cuisineType = cuisine;
           this._rating = rating;
           this._image = img;
-     }
-     public FoodStores(String name, String loc, String cuisine, String rating) {
-          //this._id = id;
-          this._foodStoreName = name;
-          this._foodStoreLocation = loc;
-          this._cuisineType = cuisine;
-          this._rating = rating;
-         // this._image = img;
      }
 
 

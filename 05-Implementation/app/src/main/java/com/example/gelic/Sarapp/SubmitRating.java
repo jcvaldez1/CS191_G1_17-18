@@ -16,16 +16,11 @@ Update 3/9/2018: Richelle Yap
 
 /* Variable Descriptions:
 
-*/
+ */
 
 package com.example.gelic.Sarapp;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,21 +30,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RatingBar;
-import android.graphics.drawable.LayerDrawable;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class SubmitRating extends AppCompatActivity {
      private Button submit;
@@ -59,25 +53,24 @@ public class SubmitRating extends AppCompatActivity {
      RatingBar pricing;
      RatingBar service;
      RatingBar ambience;
-   //  DBHandler dbHandler;
 
      TextView _name;
      TextView _location;
      TextView _cuisineType;
      TextView _rating;
-     ImageView _img;
 
      int foodStoreId;
      Bundle extras;
      ArrayList<String> foodStoreList;
-     byte [] byteArray;
-     Bitmap bmp;
 
      float fq;
      float p;
      float s;
      float a;
      String c;
+
+
+     String resultJson;
 
      /*
      Method Name: onCreate
@@ -106,38 +99,17 @@ public class SubmitRating extends AppCompatActivity {
           _location = findViewById(R.id.foodStoreLoc);
           _cuisineType = findViewById(R.id.foodStoreCuis);
           _rating = findViewById(R.id.foodStoreRat);
-         // _img = findViewById(R.id.imageView);
 
-          /*dbHandler = new DBHandler(this);
-          try {
-               dbHandler.createDB();
-          } catch (IOException ioe) {
-               throw new Error("Unable to create database");
-          }
-          try {
-               dbHandler.openDB();
-          } catch (SQLiteException sqle) {
-               throw sqle;
-          }*/
           extras = getIntent().getExtras();
           foodStoreId = extras.getInt("id");
 
           foodStoreList = extras.getStringArrayList("foodstore");
-          byteArray = extras.getByteArray("image");
-        //  bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        //  String rating1 = String.valueOf(extras.getFloat("rating"));
 
           _name.setText(foodStoreList.get(1));
           _location.setText(foodStoreList.get(2));
           _cuisineType.setText(foodStoreList.get(3));
           _rating.setText(foodStoreList.get(4));
-          new DownloadImageTask((ImageView) findViewById(R.id.imageView))
-                    .execute(foodStoreList.get(5));
-         // _img.setImageBitmap(bmp);
-          //LayerDrawable stars = (LayerDrawable) food_quality.getProgressDrawable();
-          //stars.getDrawable(2).setColorFilter(Color.parseColor("@colors/dark_orange"), PorterDuff.Mode.SRC_ATOP);
-
-
+          Glide.with(getApplicationContext()).load(foodStoreList.get(5)).into((ImageView) findViewById(R.id.imageView));
 
           submit.setOnClickListener(new View.OnClickListener() {
 
@@ -165,50 +137,34 @@ public class SubmitRating extends AppCompatActivity {
                     }
                     else {
                          Toast.makeText(SubmitRating.this, "Rating Submitted", Toast.LENGTH_SHORT).show();
-                         subRating.setText("Food Quality: " + String.valueOf(fq) +
-                                   "\nPricing: " + String.valueOf(p) +
-                                   "\nService: " + String.valueOf(s) +
-                                   "\nAmbience: " + String.valueOf(a) +
-                                   "\nComment: " + c);
 
                          sendPost();
                          Log.d("post","post task executed");
-                         // float ave = (fq + p + s + a) / 4;
-                         //  ArrayList<Float> fs = dbHandler.getFoodStore(foodStoreId);
-                         //  float curr_sum = fs.get(0) + ave;
-                         //  float ctr = fs.get(1) + 1;
-                         //  dbHandler.updateFoodStore(foodStoreId,curr_sum/ctr,curr_sum,ctr);
-
-//                         Calendar calendar = Calendar.getInstance();
-//                         String date = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
-                         // dbHandler.addRating(date, fq, p, s, a, c, ave);
-//                         int user_id = extras.getInt("user_id") + 1;
-//                         Log.d("user_id",String.valueOf(user_id));
-//                         Log.d("store_id",String.valueOf(foodStoreId));
-                         // dbHandler.addRatingRelation(foodStoreId,  user_id);
-
-                         Intent resultIntent = new Intent();
-                         resultIntent.putExtras(extras);
-
-                         setResult(RESULT_OK, resultIntent);
-                         finish();
 
 
 
                     }
-
-
                }
           });
 
 
      }
+     /*
+ Method Name:
+ Creation Date:
+ Purpose:
+ Calling Arguments:
+ Required Files:
+ Database Tables:
+ Return Value:
+  */
      public void sendPost() {
           Thread thread = new Thread(new Runnable() {
+
                @Override
                public void run() {
                     try {
-                         HttpURLConnection urlConnection = null;
+                         HttpURLConnection urlConnection;
                          JSONObject jsonInput = new JSONObject();
 
                          String site_url_json = "https://rocky-retreat-95836.herokuapp.com/user/";
@@ -231,7 +187,6 @@ public class SubmitRating extends AppCompatActivity {
 
                          Log.d("JSONpost",jsonInput.toString());
                          DataOutputStream os = new DataOutputStream(urlConnection.getOutputStream());
-                         //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
                          os.writeBytes(jsonInput.toString());
 
                          os.flush();
@@ -247,13 +202,32 @@ public class SubmitRating extends AppCompatActivity {
                               buffer.append(line);
                          }
 
-                         String resultJson = buffer.toString();
+                         resultJson = buffer.toString();
                          Log.d("json_result_post", resultJson);
 
-                         //Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-                         //Log.i("MSG" , conn.getResponseMessage());
+                         JSONObject jsonObject;
+                         try {
+                              Log.d("resJ",resultJson);
+                              jsonObject = new JSONObject(resultJson);
+                              JSONArray jsonArray = jsonObject.getJSONArray("data");
+                              JSONObject JO = jsonArray.getJSONObject(0);
+                              foodStoreList.set(4,JO.getString("sarapp_rating"));
+                              Log.d("foodStoreList",foodStoreList.get(4));
+                              extras.remove("foodstore");
+                              extras.putStringArrayList("foodstore",foodStoreList);
+                         } catch (JSONException e) {
+                              Log.d("errorFetch","errorFetch");
+                              e.printStackTrace();
+                         }
 
                          urlConnection.disconnect();
+                         Intent resultIntent = new Intent();
+                         resultIntent.putExtras(extras);
+                         setResult(RESULT_OK, resultIntent);
+                         finish();
+
+
+
                     } catch (Exception e) {
                          Log.d("submitExc","submit exception");
                          e.printStackTrace();

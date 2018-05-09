@@ -120,9 +120,9 @@ Purpose of file: Layouts the submit rating screen -->
      </RelativeLayout>
 
      <LinearLayout
+          android:id="@+id/linear_layout1_id"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:id="@+id/linear_layout1_id"
           app:layout_constraintTop_toBottomOf="@id/myId">
 
           <Button
@@ -133,31 +133,16 @@ Purpose of file: Layouts the submit rating screen -->
                android:layout_weight="1"
                android:background="@color/orange"
                android:fontFamily="@font/roboto_medium"
-               android:text="@string/ratings"
+               android:text="maSARAPP ba?"
                android:textAllCaps="false"
-               android:textColor="@color/white"
-               app:layout_constraintRight_toLeftOf="@id/button_id2" />
-
-          <Button
-               android:id="@+id/button_id2"
-               style="?android:attr/borderlessButtonStyle"
-               android:layout_width="fill_parent"
-               android:layout_weight="1"
-               android:layout_height="48dp"
-               android:background="@color/light_orange"
-               android:fontFamily="@font/roboto_medium"
-               android:text="Google Map"
-               android:textAllCaps="false"
-               android:textColor="@color/black"
-               app:layout_constraintLeft_toRightOf="@id/button_id1"
-               tools:layout_editor_absoluteX="192dp"
-               tools:layout_editor_absoluteY="198dp" />
+               android:textColor="@color/white" />
      </LinearLayout>
 
      <GridLayout
           android:id="@+id/submit_rating_grid_layout"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginLeft="5dp"
           android:backgroundTint="@color/dark_orange"
           android:columnCount="2"
           android:hapticFeedbackEnabled="false"
@@ -165,66 +150,84 @@ Purpose of file: Layouts the submit rating screen -->
           android:rowCount="4"
           app:layout_constraintTop_toBottomOf="@id/linear_layout1_id">
 
-          <TextView android:text="@string/food_quality" />
+          <TextView
+               android:text="@string/food_quality"
+               android:textColor="@color/black" />
 
           <RatingBar
                android:id="@+id/food_quality"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:theme="@style/RatingBar2"
-               android:layout_marginBottom="-15dp"/>
+               android:layout_marginBottom="-10dp"
+               android:theme="@style/RatingBar2" />
 
-          <TextView android:text="@string/pricing" />
+          <TextView
+               android:text="@string/pricing"
+               android:textColor="@color/black" />
 
           <RatingBar
                android:id="@+id/pricing"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:theme="@style/RatingBar2"
-               android:layout_marginBottom="-15dp"/>
+               android:layout_marginBottom="-10dp"
+               android:theme="@style/RatingBar2" />
 
-          <TextView android:text="@string/service" />
+          <TextView
+               android:text="@string/service"
+               android:textColor="@color/black" />
 
           <RatingBar
                android:id="@+id/service"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:theme="@style/RatingBar2"
-               android:layout_marginBottom="-15dp"/>
+               android:layout_marginBottom="-10dp"
+               android:theme="@style/RatingBar2" />
 
-          <TextView android:text="@string/ambience" />
+          <TextView
+               android:text="@string/ambience"
+               android:textColor="@color/black" />
 
           <RatingBar
                android:id="@+id/ambience"
-               android:isIndicator="false"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:theme="@style/RatingBar2"
-               android:layout_marginBottom="-15dp"/>
+               android:layout_marginBottom="-15dp"
+               android:isIndicator="false"
+               android:theme="@style/RatingBar2" />
      </GridLayout>
 
-     <EditText
-         android:id="@+id/submitText"
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:ems="10"
-         android:inputType="textPersonName"
-         app:layout_constraintTop_toBottomOf="@+id/submit_rating_grid_layout"
-          android:hint = "Comment here..."/>
+
+     <android.support.design.widget.TextInputLayout
+          android:id="@+id/submitTextLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:counterEnabled="true"
+          app:counterMaxLength="140"
+          app:layout_constraintTop_toBottomOf="@+id/submit_rating_grid_layout">
+
+          <EditText
+               android:id="@+id/submitText"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:hint="Comment below" />
+
+     </android.support.design.widget.TextInputLayout>
 
      <TextView
-         android:id="@+id/ratingText"
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         app:layout_constraintTop_toBottomOf="@id/submitButt"
-         tools:layout_editor_absoluteX="3dp" />
+          android:id="@+id/ratingText"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toBottomOf="@id/submitButt"
+          tools:layout_editor_absoluteX="3dp" />
 
      <Button
           android:id="@+id/submitButt"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:text="Submit"
+          android:layout_marginHorizontal="5dp"
           android:background="@drawable/submitrating_button_bg"
-          app:layout_constraintTop_toBottomOf="@id/submitText"
+          android:text="Submit"
+          app:layout_constraintTop_toBottomOf="@id/submitTextLayout"
           tools:layout_editor_absoluteY="51dp" />
+
 </android.support.constraint.ConstraintLayout>

@@ -37,7 +37,8 @@ class UserController < ApplicationController
 
        if user.save
         updateFoodStoreFields(user_params[:food_store_id] , user.average)
-        render json: {status: 'SUCCESS' , message:'Saved User' , data:user},status: :ok
+        food = FoodStore.find(user_params[:food_store_id])
+        render json: {status: 'SUCCESS' , message:'Saved User' , data:[food]},status: :ok
 
        else
         render json: {status: 'ERROR', message:'User not Saved', data:user.errors.full_messages},status: :unprocessable_entity
@@ -56,7 +57,7 @@ class UserController < ApplicationController
     def updateFoodStoreFields(prams , average)
          food = FoodStore.find(prams)
          food.update(curr_sum:food.curr_sum + average , num_of_rating:food.num_of_rating + 1)
-         food.update(sarapp_rating:(food.curr_sum/food.num_of_rating)/1.0)
+         food.update(sarapp_rating:((food.curr_sum/food.num_of_rating)*100).floor / 100.0)
     end
 
      # Method Name: getAverage

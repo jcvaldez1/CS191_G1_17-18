@@ -28,29 +28,37 @@ Initial Code Authored by: Richelle Yap
 
 package com.example.gelic.Sarapp;
 
-import android.app.SearchManager;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuInflater;
-import android.content.Context;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.view.Menu;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class SearchListActivity extends AppCompatActivity {
@@ -65,7 +73,8 @@ public class SearchListActivity extends AppCompatActivity {
      SearchRowAdapter foodAdapter;
      ListView foodListView;
      FoodStores foodStore;
-     //DBHandler dbHandler;
+     String resultJson = "";
+     private ProgressBar progressBar;
 
 
      /*
@@ -81,40 +90,88 @@ public class SearchListActivity extends AppCompatActivity {
      protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
           setContentView(R.layout.activity_search_list);
-          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-          /*dbHandler = new DBHandler(this);
-
-          try {
-               dbHandler.createDB();
-          } catch (IOException ioe) {
-               throw new Error("Unable to create database");
+          if (isOnline()){
+               progressBar = findViewById(R.id.progressBar);
+               getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+               progressBar.setVisibility(View.VISIBLE);
+               getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+               ParseTask asynctask = new ParseTask(this);
+               asynctask.execute();
           }
+
+
+     }
+
+               /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
+
+     public boolean isOnline() {
+          ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+          NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+          if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
+               AlertDialog alertDialog = new AlertDialog.Builder(SearchListActivity.this).create();
+
+               alertDialog.setTitle("OH NO :(");
+               alertDialog.setMessage("No Internet Connection! Check your WiFi or Mobile Data settings and try again.");
+               alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+               alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK",new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                         finish();
+                    }
+               });
+
+               alertDialog.show();
+               return false;
+          }
+          return true;
+     }
+     @Override
+     public void onResume() {
+          super.onResume();
+          //When BACK BUTTON is pressed, the activity on the stack is restarted
+          //Do what you want on the refresh procedure here
+          Log.d("RESUME", "theresume");
+          progressBar = findViewById(R.id.progressBar);
+          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+          progressBar.setVisibility(View.VISIBLE);
+          ParseTask asynctask = new ParseTask(this);
+          asynctask.execute();
+     }
+
+
+     /*
+   Method Name:
+   Creation Date:
+   Purpose:
+   Calling Arguments:
+   Required Files:
+   Database Tables:
+   Return Value:
+   */
+     public void updateAdapter (String resultJson){
+          Log.d("json_list",resultJson);
           try {
-               dbHandler.openDB();
-          } catch (SQLiteException sqle) {
-               throw sqle;
-          }*/
-
-
-         // foodStores = dbHandler.getAllFoodStores();
-
-
-          /*for (FoodStores foodStore : foodStores) {
-               foodStoreId.add(foodStore.get_id());
-               foodStoreNames.add(foodStore.get_foodStoreName());
-               foodStoreCuisineTypes.add(foodStore.get_cuisineType());
-               foodStoreLocations.add(foodStore.get_foodStoreLocation());
-               foodStoreRatings.add(foodStore.get_rating());
-               foodStoreImages.add(foodStore.get_image());
-          }*/
-          String JSON_STR = getIntent().getExtras().getString("JSON_DATA");
-          Log.d("json_list",JSON_STR);
-          try {
-               JSONObject jsonObject = new JSONObject(JSON_STR);
+               JSONObject jsonObject = new JSONObject(resultJson);
                JSONArray jsonArray = jsonObject.getJSONArray("data");
 
+               foodStores.removeAll(foodStores);
+               foodStoreId.removeAll(foodStoreId);
+               foodStoreNames.removeAll(foodStoreNames);
+               foodStoreLocations.removeAll(foodStoreLocations);
+               foodStoreCuisineTypes.removeAll(foodStoreCuisineTypes);
+               foodStoreRatings.removeAll(foodStoreRatings);
+               foodStoreImages.removeAll(foodStoreImages);
                int count = 0;
-
                while (count < jsonArray.length()){
                     JSONObject JO = jsonArray.getJSONObject(count);
                     foodStoreId.add(JO.getInt("id"));
@@ -123,14 +180,14 @@ public class SearchListActivity extends AppCompatActivity {
                     foodStoreCuisineTypes.add(JO.getString("cuisineType"));
                     foodStoreRatings.add(JO.getString("sarapp_rating"));
                     foodStoreImages.add(JO.getString("image"));
+                    Log.d("SARAPP_Name",foodStoreNames.get(count));
+                    Log.d("SARAPP_Rating",foodStoreRatings.get(count));
                     foodStore = new FoodStores(foodStoreId.get(count),
                               foodStoreNames.get(count),
                               foodStoreLocations.get(count),foodStoreCuisineTypes.get(count),
                               foodStoreRatings.get(count),
                               foodStoreImages.get(count));
                     foodStores.add(foodStore);
-                    //foodStoreList.add(foodStore);
-                    //foodAdapter.add(foodStores);
                     count++;
 
                }
@@ -141,6 +198,7 @@ public class SearchListActivity extends AppCompatActivity {
           foodAdapter = new SearchRowAdapter(this, foodStores);
           foodListView = findViewById(R.id.foodStoreList_search);
           foodListView.setAdapter(foodAdapter);
+          foodAdapter.notifyDataSetChanged();
 
           foodListView.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
@@ -162,11 +220,8 @@ public class SearchListActivity extends AppCompatActivity {
 
                               ArrayList<String> rowAttributes = new ArrayList<>();
                               Bundle dataBundle = new Bundle();
-                              ByteArrayOutputStream stream;
-                              byte[] byteArray;
                               Intent intent;
 
-                              //rowAttributes.add(String.valueOf(foodStoreId.get(i)));
                               FoodStores temp = foodAdapter.getItem(i);
                               Log.d("on_item", String.valueOf(foodStoreNames.indexOf(temp.get_foodStoreName())));
                               Log.d("on_item2", temp.get_foodStoreName());
@@ -174,29 +229,14 @@ public class SearchListActivity extends AppCompatActivity {
                               Log.d("on_item2", temp.get_cuisineType());
                               Log.d("on_item2", String.valueOf(temp.get_rating()));
 
-
-
-                            //  rowAttributes.add(String.valueOf(temp.get_id()));
-                              //mag-eerror kapag may same food store name
                               int yes = foodStoreNames.indexOf(temp.get_foodStoreName());
                               rowAttributes.add(String.valueOf(foodStoreId.get(yes)));
-                             Log.d("indexof",String.valueOf(foodStoreId.get(yes)));
+                              Log.d("indexof",String.valueOf(foodStoreId.get(yes)));
                               rowAttributes.add(temp.get_foodStoreName());
                               rowAttributes.add(temp.get_foodStoreLocation());
                               rowAttributes.add(temp.get_cuisineType());
                               rowAttributes.add(String.valueOf(temp.get_rating()));
                               rowAttributes.add(temp.get_image());
-                              //rowAttributes.add(foodStoreNames.get(i));
-                              //rowAttributes.add(foodStoreLocations.get(i));
-                              //rowAttributes.add(foodStoreCuisineTypes.get(i));
-                              //rowAttributes.add(String.valueOf(foodStoreRatings.get(i)));
-
-                             // stream = new ByteArrayOutputStream();
-                              //temp.get_image().compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                              //foodStoreImages.get(i).compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                             // byteArray = stream.toByteArray();
-
-                              //dataBundle.putByteArray("image", byteArray);
                               dataBundle.putStringArrayList("foodstore", rowAttributes);
 
                               intent = new Intent(getApplicationContext(), ViewFoodStore.class);
@@ -205,8 +245,6 @@ public class SearchListActivity extends AppCompatActivity {
                          }
                     }
           );
-
-
      }
 
      /*
@@ -233,10 +271,76 @@ public class SearchListActivity extends AppCompatActivity {
 
                @Override
                public boolean onQueryTextChange(String s) {
-                    foodAdapter.getFilter().filter(s);
+                    foodAdapter.getFilter().filter(s, new Filter.FilterListener() {
+                         @Override
+                         public void onFilterComplete(int count) {
+                              if (count == 0){
+                                   Toast.makeText(SearchListActivity.this, "Food store not found :(", Toast.LENGTH_SHORT).show();
+                              }
+                         }
+                    });
                     return false;
                }
           });
           return super.onCreateOptionsMenu(menu);
      }
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public class ParseTask extends AsyncTask<Void, Void, String> {
+
+          HttpURLConnection urlConnection = null;
+          BufferedReader reader = null;
+          private SearchListActivity foodstore_searchlist;
+
+          public ParseTask(SearchListActivity foodstore_searchlist) {
+               this.foodstore_searchlist = foodstore_searchlist;
+          }
+
+
+          @Override
+          protected String doInBackground(Void... params) {
+               try {
+
+                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store";
+                    URL url = new URL(site_url_json);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                         buffer.append(line);
+                    }
+
+                    resultJson = buffer.toString();
+                    Log.d("json_result_main", resultJson);
+               } catch (Exception e) {
+                    e.printStackTrace();
+               }
+               return resultJson;
+          }
+
+          protected void onPostExecute(String strJson) {
+               super.onPostExecute(strJson);
+               progressBar.setVisibility(View.GONE);
+               foodstore_searchlist.updateAdapter(strJson);
+               Log.d("FINISH", "FINISH");
+
+          }
+     }
+
 }

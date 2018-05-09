@@ -19,6 +19,15 @@ import android.os.Bundle;
 
 public class SplashScreen extends AppCompatActivity {
 
+          /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
      @Override
      protected void onCreate(Bundle savedInstanceState) {
           setTheme(android.R.style.Theme_Translucent_NoTitleBar);

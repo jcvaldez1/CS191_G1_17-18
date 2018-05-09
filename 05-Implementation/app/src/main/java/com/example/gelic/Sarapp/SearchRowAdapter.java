@@ -20,17 +20,16 @@ Initial Code Authored by: Angelika Juliah S. Galang
 package com.example.gelic.Sarapp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -131,8 +130,7 @@ public class SearchRowAdapter extends BaseAdapter implements Filterable {
           foodStoreCuisCustom.setText(foodStores.get(pos).get_cuisineType());
           foodStoreLocCustom.setText(foodStores.get(pos).get_foodStoreLocation());
           foodStoreRatCustom.setText(foodStores.get(pos).get_rating());
-          new DownloadImageTask((ImageView) customView.findViewById(R.id.imageView2))
-                    .execute(foodStores.get(pos).get_image());
+          Glide.with(c.getApplicationContext()).load(foodStores.get(pos).get_image()).into((ImageView) customView.findViewById(R.id.imageView2));
 
           return customView;
      }

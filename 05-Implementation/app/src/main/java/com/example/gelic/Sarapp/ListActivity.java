@@ -33,9 +33,14 @@ Initial Code Authored by: Angelika Juliah S. Galang
 
 package com.example.gelic.Sarapp;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,17 +48,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
-     ArrayList<FoodStores> foodStores = new ArrayList<>();
+
      ArrayList<Integer> foodStoreId = new ArrayList<>();
      ArrayList<String> foodStoreNames = new ArrayList<>();
      ArrayList<String> foodStoreCuisineTypes = new ArrayList<>();
@@ -62,9 +73,8 @@ public class ListActivity extends AppCompatActivity {
      ArrayList<String> foodStoreImages = new ArrayList<>();
      ArrayAdapter<String> foodAdapter;
      ListView foodListView;
-    // DBHandler dbHandler;
-
-
+     String resultJson = "";
+     private ProgressBar progressBar;
 
      /*
      Method Name: onCreate
@@ -79,30 +89,76 @@ public class ListActivity extends AppCompatActivity {
      protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
           setContentView(R.layout.activity_list);
-          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        /*  dbHandler = new DBHandler(this);
-
-          try {
-               dbHandler.createDB();
-          } catch (IOException ioe) {
-               throw new Error("Unable to create database");
+          if (isOnline()) {
+               progressBar = findViewById(R.id.progressBar);
+               getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+               progressBar.setVisibility(View.VISIBLE);
+               ParseTask asynctask = new ParseTask(this);
+               asynctask.execute();
           }
-          try {
-               dbHandler.openDB();
-          } catch (SQLiteException sqle) {
-               throw sqle;
-          }*/
 
 
-          String JSON_STR = getIntent().getExtras().getString("JSON_DATA");
-          Log.d("json_str",JSON_STR);
+     }
+
+          /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
+
+     public boolean isOnline() {
+          ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+          NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+          if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
+               AlertDialog alertDialog = new AlertDialog.Builder(ListActivity.this).create();
+
+               alertDialog.setTitle("OH NO :(");
+               alertDialog.setMessage("No Internet Connection! Check your WiFi or Mobile Data settings and try again.");
+               alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+               alertDialog.setButton(Dialog.BUTTON_POSITIVE,"OK",new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                         finish();
+                    }
+               });
+
+               alertDialog.show();
+               return false;
+          }
+          return true;
+     }
+          /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
+
+     public void updateAdapter(String resultJson) {
+
+          Log.d("json_str", resultJson);
           try {
-               JSONObject jsonObject = new JSONObject(JSON_STR);
+               JSONObject jsonObject = new JSONObject(resultJson);
                JSONArray jsonArray = jsonObject.getJSONArray("data");
 
+               foodStoreId.removeAll(foodStoreId);
+               foodStoreNames.removeAll(foodStoreNames);
+               foodStoreLocations.removeAll(foodStoreLocations);
+               foodStoreCuisineTypes.removeAll(foodStoreCuisineTypes);
+               foodStoreRatings.removeAll(foodStoreRatings);
+               foodStoreImages.removeAll(foodStoreImages);
                int count = 0;
 
-               while (count < jsonArray.length()){
+               while (count < jsonArray.length()) {
                     JSONObject JO = jsonArray.getJSONObject(count);
                     foodStoreId.add(JO.getInt("id"));
                     foodStoreNames.add(JO.getString("name"));
@@ -110,9 +166,6 @@ public class ListActivity extends AppCompatActivity {
                     foodStoreCuisineTypes.add(JO.getString("cuisineType"));
                     foodStoreRatings.add(JO.getString("sarapp_rating"));
                     foodStoreImages.add(JO.getString("image"));
-                    //  foodStore = new FoodStores()
-                    //foodStoreList.add(foodStore);
-                    //foodAdapter.add(foodStores);
                     count++;
 
                }
@@ -121,7 +174,7 @@ public class ListActivity extends AppCompatActivity {
           }
 
           foodAdapter = new CustomRowAdapter(this, foodStoreNames, foodStoreCuisineTypes,
-                    foodStoreLocations, foodStoreRatings,foodStoreImages);
+                    foodStoreLocations, foodStoreRatings, foodStoreImages);
           foodListView = findViewById(R.id.foodStoreList);
           foodListView.setAdapter(foodAdapter);
 
@@ -141,27 +194,19 @@ public class ListActivity extends AppCompatActivity {
                          Return Value: None
                           */
                          @Override
-                         public void onItemClick(AdapterView<?> adapterView, View view, int i,long l) {
+                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                               ArrayList<String> rowAttributes = new ArrayList<>();
                               Bundle dataBundle = new Bundle();
-                              ByteArrayOutputStream stream;
-                              byte[] byteArray;
                               Intent intent;
 
                               rowAttributes.add(String.valueOf(foodStoreId.get(i)));
-                              Log.d("idFS",String.valueOf(foodStoreId.get(i)));
+                              Log.d("idFS", String.valueOf(foodStoreId.get(i)));
                               rowAttributes.add(foodStoreNames.get(i));
                               rowAttributes.add(foodStoreLocations.get(i));
                               rowAttributes.add(foodStoreCuisineTypes.get(i));
-                              rowAttributes.add(String.valueOf(foodStoreRatings.get(i)));
+                              rowAttributes.add(foodStoreRatings.get(i));
                               rowAttributes.add(foodStoreImages.get(i));
-
-                            ///  stream = new ByteArrayOutputStream();
-                            //  foodStoreImages.get(i).compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                              //byteArray = stream.toByteArray();
-
-                              //dataBundle.putByteArray("image", byteArray);
                               dataBundle.putStringArrayList("foodstore", rowAttributes);
 
                               intent = new Intent(getApplicationContext(), ViewFoodStore.class);
@@ -170,8 +215,78 @@ public class ListActivity extends AppCompatActivity {
                          }
                     }
           );
-
-
      }
 
+
+     /*
+     Method Name:
+     Creation Date:
+     Purpose:
+     Calling Arguments:
+     Required Files:
+     Database Tables:
+     Return Value:
+     */
+     public class ParseTask extends AsyncTask<Void, Integer, String> {
+
+          HttpURLConnection urlConnection = null;
+          BufferedReader reader = null;
+          private ListActivity foodstore_list;
+
+          public ParseTask(ListActivity foodstore_list) {
+               this.foodstore_list = foodstore_list;
+          }
+
+
+          @Override
+          protected String doInBackground(Void... params) {
+               try {
+
+                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store";
+                    URL url = new URL(site_url_json);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+                    InputStream inputStream = urlConnection.getInputStream();
+
+                    StringBuffer buffer = new StringBuffer();
+
+
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                         buffer.append(line);
+                         Log.d("BUFFER", line);
+                    }
+
+                    resultJson = buffer.toString();
+                    Log.d("json_result_main", resultJson);
+               } catch (Exception e) {
+                    e.printStackTrace();
+               }
+               return resultJson;
+          }
+
+          protected void onPostExecute(String strJson) {
+               super.onPostExecute(strJson);
+               progressBar.setVisibility(View.GONE);
+               foodstore_list.updateAdapter(strJson);
+
+          }
+     }
+
+     @Override
+     public void onResume() {
+          super.onResume();
+          //When BACK BUTTON is pressed, the activity on the stack is restarted
+          //Do what you want on the refresh procedure here
+          Log.d("RESUME", "theresume");
+          progressBar = findViewById(R.id.progressBar);
+          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+          progressBar.setVisibility(View.VISIBLE);
+          ParseTask asynctask = new ParseTask(this);
+          asynctask.execute();
+     }
 }

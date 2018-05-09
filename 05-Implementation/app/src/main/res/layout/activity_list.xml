@@ -18,10 +18,19 @@ Purpose of file: Layouts the activity list screen showing the list of food store
      android:layout_height="match_parent"
      tools:context="com.example.gelic.Sarapp.ListActivity">
 
+     <ProgressBar
+         android:layout_centerInParent="true"
+         android:id="@+id/progressBar"
+         style="?android:attr/progressBarStyle"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:theme="@style/Progressbar"/>
+
      <ListView
           android:id="@+id/foodStoreList"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           tools:layout_editor_absoluteX="8dp"
           tools:layout_editor_absoluteY="8dp" />
+
 </RelativeLayout>

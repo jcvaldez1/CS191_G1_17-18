@@ -29,51 +29,50 @@ Update 3/9/2018: Richelle Yap
 
 package com.example.gelic.Sarapp;
 
-import android.database.sqlite.SQLiteException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.AdapterView;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
+import android.content.Intent;
+import android.view.View;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import android.content.Intent;
-import android.view.View;
-
+import java.util.Collections;
+import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ViewFoodStore extends AppCompatActivity{
      String resultJson = "";
+     String resultJsonStore = "";
      int id;
      TextView name;
      TextView location;
      TextView cuisineType;
      TextView rating;
-     ImageView img;
-     Button ratingButton, googleMapButton, submitRating;
+     Button ratingButton,ratingButton2;
      ArrayList<String> foodStoreList;
      byte[] byteArray;
      Bundle extras;
-   //  DBHandler dbHandler;
-     ArrayList<UserRatings> ratings;
      ArrayList<Integer> ratingId = new ArrayList<>();
      ArrayList<String> ratingDate = new ArrayList<>();
      ArrayList<Integer> ratingQuality = new ArrayList<>();
@@ -86,6 +85,7 @@ public class ViewFoodStore extends AppCompatActivity{
      ListView ratingListView;
      int user_id = 0;
      float temp_rating = 0;
+     private ProgressBar progressBar;
 
      /*
      Method Name: onCreate
@@ -99,82 +99,51 @@ public class ViewFoodStore extends AppCompatActivity{
      @Override
      protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
-
+          Log.d("hello","hello");
           overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
           ratingButton = findViewById(R.id.button_id1);
-          googleMapButton = findViewById(R.id.button_id2);
+          ratingButton2 = findViewById(R.id.button_id3);
           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
           setContentView(R.layout.activity_view_food_store);
+
+          progressBar = findViewById(R.id.progressBar2);
+          progressBar.setVisibility(View.VISIBLE);
 
           name = findViewById(R.id.foodStoreName);
           location = findViewById(R.id.foodStoreLoc);
           cuisineType = findViewById(R.id.foodStoreCuis);
           rating = findViewById(R.id.foodStoreRat);
-          // img = findViewById(R.id.imageView);
 
-          // dbHandler = new DBHandler(this);
           extras = getIntent().getExtras();
 
           if (extras != null) {
 
                foodStoreList = extras.getStringArrayList("foodstore");
-//               byteArray = extras.getByteArray("image");
-//               Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                id = Integer.parseInt(foodStoreList.get(0));
                Log.d("idView",String.valueOf(id));
                ParseTask asynctask = new ParseTask(this);
                asynctask.execute();
-               //new ParseTask().execute(this);
-               //Log.d("view_food", foodStoreList.get(0));
-
+               progressBar.setVisibility(View.GONE);
                name.setText(foodStoreList.get(1));
                location.setText(foodStoreList.get(2));
                cuisineType.setText(foodStoreList.get(3));
                rating.setText(foodStoreList.get(4));
-               new DownloadImageTask((ImageView) findViewById(R.id.imageView))
-                         .execute(foodStoreList.get(5));
+               Glide.with(getApplicationContext()).load(foodStoreList.get(5)).into((ImageView) findViewById(R.id.imageView));
 
-
-               //img.setImageBitmap(bmp);
 
           }
-
-         /* try {
-               dbHandler.createDB();
-          } catch (IOException ioe) {
-               throw new Error("Unable to create database");
-          }
-          try {
-               dbHandler.openDB();
-          } catch (SQLiteException sqle) {
-               throw sqle;
-          }*/
-
-
-         /*ratings = dbHandler.getAllRatings(id);
-
-          //temp_rating = dbHandler.getNewRating(id);
-          String temp = String.valueOf(temp_rating);
-          rating.setText(temp);
-
-          for (UserRatings userRating : ratings) {
-
-               ratingId.add(userRating.get_id());
-               ratingDate.add(userRating.get_date());
-               ratingQuality.add(userRating.get_quality());
-               ratingPricing.add(userRating.get_pricing());
-               ratingService.add(userRating.get_service());
-               ratingAmbience.add(userRating.get_ambience());
-               ratingComment.add(userRating.get_comment());
-               ratingAverage.add(userRating.get_average());
-
-          ratings = dbHandler.getAllRatings(id);*/
-          Log.d("hello", "hello");
-
-          Log.d("resultJson", resultJson);
 
      }
+     /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
      public void updateAdapter(String resultJson) {
           Log.d("resultJson", resultJson);
           try {
@@ -182,11 +151,6 @@ public class ViewFoodStore extends AppCompatActivity{
                JSONArray jsonArray = jsonObject.getJSONArray("data");
                int count = 0;
 
-//<<<<<<< Updated upstream
-//          temp_rating = dbHandler.getNewRating(id);
-//          String temp = String.valueOf(temp_rating);
-//          rating.setText(temp);
-//=======
                while (count < jsonArray.length()) {
                     JSONObject JO = jsonArray.getJSONObject(count);
                     ratingId.add(JO.getInt("id"));
@@ -196,20 +160,41 @@ public class ViewFoodStore extends AppCompatActivity{
                     ratingAmbience.add(JO.getInt("ambience"));
                     ratingComment.add(JO.getString("comment"));
                     ratingAverage.add(JO.getDouble("average"));
-                    ratingDate.add(JO.getString("created_at"));
-                    //  foodStore = new FoodStores()
-                    //foodStoreList.add(foodStore);
-                    //foodAdapter.add(foodStores);
-                    count++;
-//>>>>>>> Stashed changes
 
+                    String time = JO.getString("created_at");
+                    String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+                    String outputPattern = "MM/dd/yyyy";
+                    SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+                    SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+                    Date date;
+                    String str;
+                    try {
+                         date = inputFormat.parse(time);
+                         str = outputFormat.format(date);
+                         ratingDate.add(str);
+                         Log.d("new_date", str);
+                    } catch (ParseException e) {
+                         e.printStackTrace();
+                         ratingDate.add(time);
+                         Log.d("new_date_error", time);
+                    }
+                    count++;
                }
           } catch (JSONException e) {
                e.printStackTrace();
           }
 
+          Collections.reverse(ratingDate);
+          Collections.reverse(ratingQuality);
+          Collections.reverse(ratingPricing);
+          Collections.reverse(ratingService);
+          Collections.reverse(ratingAmbience);
+          Collections.reverse(ratingComment);
+          Collections.reverse(ratingAverage);
+
           ratingAdapter = new CustomRowAdapterRating(this, ratingDate, ratingQuality, ratingPricing,
-                    ratingService, ratingAmbience, ratingComment, ratingAverage);
+                  ratingService, ratingAmbience, ratingComment, ratingAverage);
           ratingListView = findViewById(R.id.ratingList);
           ratingListView.setAdapter(ratingAdapter);
 
@@ -219,6 +204,15 @@ public class ViewFoodStore extends AppCompatActivity{
           ratingListView.invalidateViews();
      }
 
+     /*
+      Method Name:
+      Creation Date:
+      Purpose:
+      Calling Arguments:
+      Required Files:
+      Database Tables:
+      Return Value:
+       */
      public class ParseTask extends AsyncTask<Void, Void, String> {
 
           HttpURLConnection urlConnection = null;
@@ -228,6 +222,7 @@ public class ViewFoodStore extends AppCompatActivity{
           public ParseTask(ViewFoodStore foodstore_page) {
                this.foodstore_page = foodstore_page;
           }
+
 
           @Override
           protected String doInBackground(Void... params) {
@@ -260,6 +255,7 @@ public class ViewFoodStore extends AppCompatActivity{
 
           protected void onPostExecute(String strJson) {
                super.onPostExecute(strJson);
+               progressBar.setVisibility(View.GONE);
                foodstore_page.updateAdapter(strJson);
           }
      }
@@ -308,5 +304,4 @@ public class ViewFoodStore extends AppCompatActivity{
      }
 
 }
-
 
