@@ -19,16 +19,40 @@
 
 class FoodStoreController < ApplicationController
 
-  # Method Name: index
+  # Method Name: show
   #      Creation Date: 2/17/2018
   #      Purpose: Must exist for a /food_store/index route to also exist
   #      Calling Arguments: None
   #      Required Files: food_store.rb, /viewl/user/index.html.erb , routes.rb, schema.rb
   #      Database Tables: FoodStore db table
   #      Return Value:  None
-     def index
-      foodstores = FoodStore.all
-      render json: {status: 'SUCCESS' , message:'Loaded articles' , data:foodstores.sort_by(&:sarapp_rating).reverse},status: :ok
+     def show
+      data = sortinate(params[:id])
+      render json: {status: 'SUCCESS' , message:'Loaded articles' , data:data.reverse},status: :ok
+     end
+
+  # Method Name: sortinate
+  #      Creation Date: 5/13/2018
+  #      Purpose: Must exist for a /food_store/index route to also exist
+  #      Calling Arguments: None
+  #      Required Files: food_store.rb, /viewl/user/index.html.erb , routes.rb, schema.rb
+  #      Database Tables: FoodStore db table
+  #      Return Value:  foodstore list to be shown
+     def sortinate(sort_param)
+	foodstores = FoodStore.all	
+	if sort_param == "sarapp_rating"
+		return foodstores.sort_by(&:sarapp_rating)
+	elsif sort_param == "ambience"
+		return foodstores.sort_by(&:ambience_average)	
+	elsif sort_param == "foodquality"
+		return foodstores.sort_by(&:foodquality_average)	
+	elsif sort_param == "service"
+		return foodstores.sort_by(&:service_average)	
+	elsif sort_param == "pricing"
+		return foodstores.sort_by(&:pricing_average)	
+	elsif sort_param == "ratings"
+		return foodstores.sort_by(&:num_of_rating)	
+        end
      end
 
 end

@@ -308,8 +308,7 @@ public class SearchListActivity extends AppCompatActivity {
           @Override
           protected String doInBackground(Void... params) {
                try {
-
-                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store";
+                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store/sarapp_rating";
                     URL url = new URL(site_url_json);
 
                     urlConnection = (HttpURLConnection) url.openConnection();

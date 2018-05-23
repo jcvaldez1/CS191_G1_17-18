@@ -36,7 +36,7 @@ class UserController < ApplicationController
        user.average = getAverage(user.foodquality,user.pricing,user.service,user.ambience)
 
        if user.save
-        updateFoodStoreFields(user_params[:food_store_id] , user.average)
+        updateFoodStoreFields(user_params , user.average)
         food = FoodStore.find(user_params[:food_store_id])
         render json: {status: 'SUCCESS' , message:'Saved User' , data:[food]},status: :ok
 
@@ -55,10 +55,26 @@ class UserController < ApplicationController
     #      Database Tables: User None
     #      Return Value: None
     def updateFoodStoreFields(prams , average)
-         food = FoodStore.find(prams)
+         food = FoodStore.find(prams[:food_store_id])
+	 if food.curr_sum_ambience == nil
+	      food.update(curr_sum_ambience:0,curr_sum_price:0,curr_sum_service:0,curr_sum_food:0)
+	 end
          food.update(curr_sum:food.curr_sum + average , num_of_rating:food.num_of_rating + 1)
+         
+	 food.update(curr_sum_ambience:food.curr_sum_ambience + prams[:ambience])
+         food.update(curr_sum_food:food.curr_sum_food + prams[:foodquality] )
+         food.update(curr_sum_price:food.curr_sum_price + prams[:pricing] )
+         food.update(curr_sum_service:food.curr_sum_service + prams[:service] )
+
+         food.update(ambience_average:((food.curr_sum_ambience/food.num_of_rating)*100).floor / 100.0)
+         food.update(service_average:((food.curr_sum_service/food.num_of_rating)*100).floor / 100.0)
+         food.update(foodquality_average:((food.curr_sum_food/food.num_of_rating)*100).floor / 100.0)
+         food.update(pricing_average:((food.curr_sum_price/food.num_of_rating)*100).floor / 100.0)
+
          food.update(sarapp_rating:((food.curr_sum/food.num_of_rating)*100).floor / 100.0)
     end
+
+    
 
      # Method Name: getAverage
      #      Creation Date: 03/08/2018
@@ -99,6 +115,6 @@ class UserController < ApplicationController
 
     def user_params
 		params.permit(:food_store_id, :foodquality, :pricing, :service, :ambience, :comment)
-	end
+    end
 
 end

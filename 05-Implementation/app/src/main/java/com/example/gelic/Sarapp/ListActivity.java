@@ -44,6 +44,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -74,6 +76,7 @@ public class ListActivity extends AppCompatActivity {
      ArrayAdapter<String> foodAdapter;
      ListView foodListView;
      String resultJson = "";
+     String param = "sarapp_rating";
      private ProgressBar progressBar;
 
      /*
@@ -100,6 +103,36 @@ public class ListActivity extends AppCompatActivity {
 
      }
 
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+          getMenuInflater().inflate(R.menu.discover_menu, menu);
+          return true;
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+          int id = item.getItemId();
+
+          if (id == R.id.sarapp_rating) {
+               param = "sarapp_rating";
+          }else if (id == R.id.no_ratings){
+               param = "ratings";
+          }else if (id == R.id.ambience_rating){
+               param = "ambience";
+          }else if (id == R.id.service_rating){
+               param = "service";
+          }else if (id == R.id.food_quality_rating){
+               param = "foodquality";
+          }else{
+               param = "pricing";
+          }
+          progressBar = findViewById(R.id.progressBar);
+          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+          progressBar.setVisibility(View.VISIBLE);
+          ParseTask asynctask = new ParseTask(this);
+          asynctask.execute();
+          return super.onOptionsItemSelected(item);
+     }
           /*
       Method Name:
       Creation Date:
@@ -242,7 +275,7 @@ public class ListActivity extends AppCompatActivity {
           protected String doInBackground(Void... params) {
                try {
 
-                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store";
+                    String site_url_json = "https://rocky-retreat-95836.herokuapp.com/food_store/" + param;
                     URL url = new URL(site_url_json);
 
                     urlConnection = (HttpURLConnection) url.openConnection();

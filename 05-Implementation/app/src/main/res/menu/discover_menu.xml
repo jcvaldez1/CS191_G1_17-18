@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+        <item android:id="@+id/sarapp_rating"
+            android:title="Average Rating" />
+        <item android:id="@+id/no_ratings"
+            android:title="No. of Ratings" />
+        <item android:id="@+id/ambience_rating"
+            android:title="Ambience" />
+        <item android:id="@+id/service_rating"
+            android:title="Service" />
+        <item android:id="@+id/food_quality_rating"
+            android:title="Quality" />
+        <item android:id="@+id/pricing_rating"
+            android:title="Pricing" />
+</menu>
